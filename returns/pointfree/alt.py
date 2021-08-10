@@ -1,23 +1,21 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.altable import AltableN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_AltableKind = TypeVar('_AltableKind', bound=AltableN)
+_AltableKind = TypeVar(u'_AltableKind', bound=AltableN)
 
 
 def alt(
-    function: Callable[[_SecondType], _UpdatedType],
-) -> Kinded[Callable[
-    [KindN[_AltableKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_AltableKind, _FirstType, _UpdatedType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Lifts function to be wrapped in a container for better composition.
 
     In other words, it modifies the function's
@@ -45,7 +43,7 @@ def alt(
     """
     @kinded
     def factory(
-        container: KindN[_AltableKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_AltableKind, _FirstType, _UpdatedType, _ThirdType]:
+        container,
+    ):
         return container.alt(function)
     return factory

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from itertools import groupby, product
 from operator import itemgetter
 from typing import Iterator, List, Optional, Tuple, cast
@@ -19,8 +20,8 @@ from returns.contrib.mypy._typeops.transform_callable import (
 _RawArgTree = List[List[List[FuncArg]]]
 
 
-def analyze(ctx: FunctionContext) -> MypyType:
-    """Returns proper type for curried functions."""
+def analyze(ctx):
+    u"""Returns proper type for curried functions."""
     if not isinstance(ctx.arg_types[0][0], CallableType):
         return ctx.default_return_type
     if not isinstance(ctx.default_return_type, CallableType):
@@ -31,18 +32,18 @@ def analyze(ctx: FunctionContext) -> MypyType:
     ).build_overloads()
 
 
-@final
 class _ArgTree(object):
-    """Represents a node in tree of arguments."""
+    u"""Represents a node in tree of arguments."""
 
-    def __init__(self, case: Optional[CallableType]) -> None:
+    def __init__(self, case):
         self.case = case
-        self.children: List['_ArgTree'] = []
+        self.children: List[u'_ArgTree'] = []
 
 
-@final
+_ArgTree = final(_ArgTree)
+
 class _CurryFunctionOverloads(object):
-    """
+    u"""
     Implementation of ``@curry`` decorator typings.
 
     Basically does just two things:
@@ -52,8 +53,8 @@ class _CurryFunctionOverloads(object):
 
     """
 
-    def __init__(self, original: CallableType, ctx: FunctionContext) -> None:
-        """
+    def __init__(self, original, ctx):
+        u"""
         Saving the things we need.
 
         Args:
@@ -75,8 +76,8 @@ class _CurryFunctionOverloads(object):
             ret_type=AnyType(TypeOfAny.implementation_artifact),
         )
 
-    def build_overloads(self) -> MypyType:
-        """
+    def build_overloads(self):
+        u"""
         Builds lots of possible overloads for a given function.
 
         Inside we try to repsent all functions as sequence of arguments,
@@ -85,7 +86,7 @@ class _CurryFunctionOverloads(object):
         if not self._args:  # There's nothing to do, function has 0 args.
             return self._original
 
-        if any(arg.kind in {ARG_STAR, ARG_STAR2} for arg in self._args):
+        if any(arg.kind in set([ARG_STAR, ARG_STAR2]) for arg in self._args):
             # We don't support `*args` and `**kwargs`.
             # Because it is very complex. It might be fixes in the future.
             return self._default.ret_type  # Any
@@ -99,10 +100,10 @@ class _CurryFunctionOverloads(object):
 
     def _build_argtree(
         self,
-        node: _ArgTree,
-        source: _RawArgTree,
-    ) -> '_ArgTree':
-        """
+        node,
+        source,
+    ):
+        u"""
         Builds argument tree.
 
         Each argument can point to zero, one, or more other nodes.
@@ -112,8 +113,8 @@ class _CurryFunctionOverloads(object):
 
         """
         def factory(
-            args: _RawArgTree,
-        ) -> Iterator[Tuple[List[FuncArg], _RawArgTree]]:
+            args,
+        ):
             if not args or not args[0]:
                 return  # we have reached an end of arguments
             yield from (
@@ -129,8 +130,8 @@ class _CurryFunctionOverloads(object):
             self._build_argtree(source=rest, node=new_node)
         return node
 
-    def _build_overloads_from_argtree(self, argtree: _ArgTree) -> None:
-        """Generates functions from argument tree."""
+    def _build_overloads_from_argtree(self, argtree):
+        u"""Generates functions from argument tree."""
         for child in argtree.children:
             self._build_overloads_from_argtree(child)
             assert child.case  # mypy is not happy  # noqa: S101
@@ -160,8 +161,8 @@ class _CurryFunctionOverloads(object):
             else:  # Root is reached, we need to save the result:
                 self._overloads.append(child.case)
 
-    def _slices(self, source: List[FuncArg]) -> Iterator[List[List[FuncArg]]]:
-        """
+    def _slices(self, source):
+        u"""
         Generate all possible slices of a source list.
 
         Example::
@@ -186,3 +187,5 @@ class _CurryFunctionOverloads(object):
                     start = index
             slices.append(source[start:])
             yield slices
+
+_CurryFunctionOverloads = final(_CurryFunctionOverloads)

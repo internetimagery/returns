@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import ClassVar
 
 from returns._internal.pipeline.flow import flow as flow
@@ -7,8 +8,8 @@ from returns.interfaces.unwrappable import Unwrappable
 from returns.primitives.exceptions import UnwrapFailedError
 
 
-def is_successful(container: Unwrappable) -> bool:
-    """
+def is_successful(container):
+    u"""
     Determines if a container was successful or not.
 
     .. code:: python

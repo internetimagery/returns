@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import ClassVar, Sequence, TypeVar
 
@@ -13,12 +14,11 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_EqualType = TypeVar('_EqualType', bound='Equable')
+_EqualType = TypeVar(u'_EqualType', bound=u'Equable')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Equality laws.
 
     Description: https://bit.ly/34D40iT
@@ -26,34 +26,36 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def reflexive_law(
-        first: _EqualType,
-    ) -> None:
-        """Value should be equal to itself."""
+        first,
+    ):
+        u"""Value should be equal to itself."""
         assert first.equals(first)
 
     @law_definition
     def symmetry_law(
-        first: _EqualType,
-        second: _EqualType,
-    ) -> None:
-        """If ``A == B`` then ``B == A``."""
+        first,
+        second,
+    ):
+        u"""If ``A == B`` then ``B == A``."""
         assert first.equals(second) == second.equals(first)
 
     @law_definition
     def transitivity_law(
-        first: _EqualType,
-        second: _EqualType,
-        third: _EqualType,
-    ) -> None:
-        """If ``A == B`` and ``B == C`` then ``A == C``."""
+        first,
+        second,
+        third,
+    ):
+        u"""If ``A == B`` and ``B == C`` then ``A == C``."""
         # We use this notation, because `first` might be equal to `third`,
         # but not to `second`. Example: Some(1), Some(2), Some(1)
         if first.equals(second) and second.equals(third):
             assert first.equals(third)
 
 
-class Equable(Lawful['Equable']):
-    """
+_LawSpec = final(_LawSpec)
+
+class Equable(Lawful[u'Equable']):
+    u"""
     Interface for types that can be compared with real values.
 
     Not all types can, because some don't have the value at a time:
@@ -69,5 +71,5 @@ class Equable(Lawful['Equable']):
     )
 
     @abstractmethod
-    def equals(self: _EqualType, other: _EqualType) -> bool:
-        """Type-safe equality check for values of the same type."""
+    def equals(self, other):
+        u"""Type-safe equality check for values of the same type."""

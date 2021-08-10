@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import ClassVar, FrozenSet, List
 
 from mypy.checker import detach_callable
@@ -7,20 +8,20 @@ from mypy.types import Type as MypyType
 from typing_extensions import final
 
 from returns.contrib.mypy._structures.args import FuncArg
+from itertools import ifilter
 
 
 def proper_type(
-    case_functions: List[CallableType],
-) -> FunctionLike:
-    """Returns a ``CallableType`` or ``Overloaded`` based on case functions."""
+    case_functions,
+):
+    u"""Returns a ``CallableType`` or ``Overloaded`` based on case functions."""
     if len(case_functions) == 1:
         return case_functions[0]
     return Overloaded(case_functions)
 
 
-@final
 class Intermediate(object):
-    """
+    u"""
     Allows to build a new callable from old one and different options.
 
     For example, helps to tell which callee arguments
@@ -34,12 +35,12 @@ class Intermediate(object):
         ARG_STAR,
     ))
 
-    def __init__(self, case_function: CallableType) -> None:
-        """We only need a callable to work on."""
+    def __init__(self, case_function):
+        u"""We only need a callable to work on."""
         self._case_function = case_function
 
-    def with_applied_args(self, applied_args: List[FuncArg]) -> CallableType:
-        """
+    def with_applied_args(self, applied_args):
+        u"""
         By calling this method we construct a new callable from its usage.
 
         This allows use to create an intermediate callable with just used args.
@@ -48,23 +49,23 @@ class Intermediate(object):
         new_named_args = self._applied_named_args(applied_args)
         return self.with_signature(new_pos_args + new_named_args)
 
-    def with_signature(self, new_args: List[FuncArg]) -> CallableType:
-        """Smartly creates a new callable from a given arguments."""
+    def with_signature(self, new_args):
+        u"""Smartly creates a new callable from a given arguments."""
         return detach_callable(self._case_function.copy_modified(
             arg_names=[arg.name for arg in new_args],
             arg_types=[arg.type for arg in new_args],
             arg_kinds=[arg.kind for arg in new_args],
         ))
 
-    def with_ret_type(self, ret_type: MypyType) -> CallableType:
-        """Smartly creates a new callable from a given return type."""
+    def with_ret_type(self, ret_type):
+        u"""Smartly creates a new callable from a given return type."""
         return self._case_function.copy_modified(ret_type=ret_type)
 
     def _applied_positional_args(
         self,
-        applied_args: List[FuncArg],
-    ) -> List[FuncArg]:
-        callee_args = list(filter(
+        applied_args,
+    ):
+        callee_args = list(ifilter(
             lambda name: name.name is None,  # TODO: maybe use `kind` instead?
             applied_args,
         ))
@@ -77,9 +78,9 @@ class Intermediate(object):
 
     def _applied_named_args(
         self,
-        applied_args: List[FuncArg],
-    ) -> List[FuncArg]:
-        callee_args = list(filter(
+        applied_args,
+    ):
+        callee_args = list(ifilter(
             lambda name: name.name is not None,
             applied_args,
         ))
@@ -97,9 +98,10 @@ class Intermediate(object):
         return new_function_args
 
 
-@final
+Intermediate = final(Intermediate)
+
 class Functions(object):
-    """
+    u"""
     Allows to create new callables based on two existing ones.
 
     For example, one can need a diff of two callables.
@@ -107,15 +109,15 @@ class Functions(object):
 
     def __init__(
         self,
-        original: CallableType,
-        intermediate: CallableType,
-    ) -> None:
-        """We need two callable to work with."""
+        original,
+        intermediate,
+    ):
+        u"""We need two callable to work with."""
         self._original = original
         self._intermediate = intermediate
 
-    def diff(self) -> CallableType:
-        """Finds a diff between two functions' arguments."""
+    def diff(self):
+        u"""Finds a diff between two functions' arguments."""
         intermediate_names = [
             arg.name
             for arg in FuncArg.from_callable(self._intermediate)
@@ -124,7 +126,7 @@ class Functions(object):
 
         for index, arg in enumerate(FuncArg.from_callable(self._original)):
             should_be_copied = (
-                arg.kind in {ARG_STAR, ARG_STAR2} or
+                arg.kind in set([ARG_STAR, ARG_STAR2]) or
                 arg.name not in intermediate_names or
                 # We need to treat unnamed args differently, because python3.8
                 # has pos_only_args, all their names are `None`.
@@ -143,3 +145,5 @@ class Functions(object):
         return Intermediate(self._original).with_signature(
             new_function_args,
         )
+
+Functions = final(Functions)

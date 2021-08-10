@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 from typing import Sequence
 
 import pytest
@@ -42,25 +44,25 @@ _containers: Sequence[BaseContainer] = (
 )
 
 
-@pytest.mark.parametrize('container', _containers)
-def test_assert_equal(container, anyio_backend_name: str):
-    """Ensure that containers can be equal."""
+@pytest.mark.parametrize(u'container', _containers)
+def test_assert_equal(container, anyio_backend_name):
+    u"""Ensure that containers can be equal."""
     assert_equal(container, container, backend=anyio_backend_name)
 
 
-@pytest.mark.parametrize('container', _containers)
+@pytest.mark.parametrize(u'container', _containers)
 def test_assert_equal_plugin(
     container,
-    anyio_backend_name: str,
-    returns: ReturnsAsserts,
+    anyio_backend_name,
+    returns,
 ):
-    """Ensure that containers can be equal."""
+    u"""Ensure that containers can be equal."""
     returns.assert_equal(container, container, backend=anyio_backend_name)
 
 
-@pytest.mark.parametrize('container', _containers)
-def test_assert_equal_not(container, anyio_backend_name: str):
-    """Ensure that containers can be not equal."""
+@pytest.mark.parametrize(u'container', _containers)
+def test_assert_equal_not(container, anyio_backend_name):
+    u"""Ensure that containers can be not equal."""
     with pytest.raises(AssertionError):
         assert_equal(
             container,
@@ -69,13 +71,13 @@ def test_assert_equal_not(container, anyio_backend_name: str):
         )
 
 
-@pytest.mark.parametrize('container', _containers)
+@pytest.mark.parametrize(u'container', _containers)
 def test_assert_equal_not_plugin(
     container,
-    anyio_backend_name: str,
-    returns: ReturnsAsserts,
+    anyio_backend_name,
+    returns,
 ):
-    """Ensure that containers can be not equal."""
+    u"""Ensure that containers can be not equal."""
     with pytest.raises(AssertionError):
         returns.assert_equal(
             container,

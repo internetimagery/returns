@@ -1,24 +1,22 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.specific.reader import ReaderLike2, ReaderLike3
 from returns.primitives.hkt import Kind2, Kind3, Kinded, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_Reader2Kind = TypeVar('_Reader2Kind', bound=ReaderLike2)
-_Reader3Kind = TypeVar('_Reader3Kind', bound=ReaderLike3)
+_Reader2Kind = TypeVar(u'_Reader2Kind', bound=ReaderLike2)
+_Reader3Kind = TypeVar(u'_Reader3Kind', bound=ReaderLike3)
 
 
 def modify_env2(
-    function: Callable[[_UpdatedType], _SecondType],
-) -> Kinded[Callable[
-    [Kind2[_Reader2Kind, _FirstType, _SecondType]],
-    Kind2[_Reader2Kind, _FirstType, _UpdatedType],
-]]:
-    """
+    function,
+):
+    u"""
     Modifies the second type argument of a ``ReaderLike2``.
 
     In other words, it modifies the function's
@@ -45,19 +43,16 @@ def modify_env2(
     """
     @kinded
     def factory(
-        container: Kind2[_Reader2Kind, _FirstType, _SecondType],
-    ) -> Kind2[_Reader2Kind, _FirstType, _UpdatedType]:
+        container,
+    ):
         return container.modify_env(function)
     return factory
 
 
 def modify_env3(
-    function: Callable[[_UpdatedType], _ThirdType],
-) -> Kinded[Callable[
-    [Kind3[_Reader3Kind, _FirstType, _SecondType, _ThirdType]],
-    Kind3[_Reader3Kind, _FirstType, _SecondType, _UpdatedType],
-]]:
-    """
+    function,
+):
+    u"""
     Modifies the third type argument of a ``ReaderLike3``.
 
     In other words, it modifies the function's
@@ -84,8 +79,8 @@ def modify_env3(
     """
     @kinded
     def factory(
-        container: Kind3[_Reader3Kind, _FirstType, _SecondType, _ThirdType],
-    ) -> Kind3[_Reader3Kind, _FirstType, _SecondType, _UpdatedType]:
+        container,
+    ):
         return container.modify_env(function)
     return factory
 

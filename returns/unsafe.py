@@ -1,12 +1,13 @@
+from __future__ import absolute_import
 from typing import TypeVar
 
 from returns.io import IO
 
-_ValueType = TypeVar('_ValueType')
+_ValueType = TypeVar(u'_ValueType')
 
 
-def unsafe_perform_io(wrapped_in_io: IO[_ValueType]) -> _ValueType:
-    """
+def unsafe_perform_io(wrapped_in_io):
+    u"""
     Compatibility utility and escape mechanism from ``IO`` world.
 
     Just unwraps the internal value

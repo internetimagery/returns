@@ -1,0 +1,9 @@
+from mypy.types import CallableType as CallableType, FunctionLike as FunctionLike, Type as MypyType
+from returns.contrib.mypy._structures.args import FuncArg as FuncArg
+from returns.contrib.mypy._structures.types import CallableContext as CallableContext
+from typing import List
+from typing_extensions import Literal as Literal
+
+def analyze_call(function: FunctionLike, args: List[FuncArg], ctx: CallableContext, show_errors: Literal[True]) -> CallableType: ...
+def safe_translate_to_function(function_def: MypyType, ctx: CallableContext) -> MypyType: ...
+def translate_to_function(function_def: MypyType, ctx: CallableContext) -> MypyType: ...

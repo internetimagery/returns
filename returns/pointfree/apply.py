@@ -1,28 +1,21 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.applicative import ApplicativeN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ApplicativeKind = TypeVar('_ApplicativeKind', bound=ApplicativeN)
+_ApplicativeKind = TypeVar(u'_ApplicativeKind', bound=ApplicativeN)
 
 
 def apply(
-    container: KindN[
-        _ApplicativeKind,
-        Callable[[_FirstType], _UpdatedType],
-        _SecondType,
-        _ThirdType,
-    ],
-) -> Kinded[Callable[
-    [KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    container,
+):
+    u"""
     Turns container containing a function into a callable.
 
     In other words, it modifies the function
@@ -52,7 +45,7 @@ def apply(
     """
     @kinded
     def factory(
-        other: KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]:
+        other,
+    ):
         return other.apply(container)
     return factory

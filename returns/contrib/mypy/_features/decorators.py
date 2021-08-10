@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Callable, Optional
 
 from mypy.nodes import ARG_POS, SymbolTableNode
@@ -10,9 +11,9 @@ from returns.contrib.mypy._typeops import analtype
 
 
 def analyze(
-    sym: Optional[SymbolTableNode],
-) -> Callable[[FunctionContext], MypyType]:
-    """
+    sym,
+):
+    u"""
     Changes a type of a decorator.
 
     This problem appears when we try to change the return type of the function.
@@ -22,7 +23,7 @@ def analyze(
     It uses the passed function to copy its type.
     We only copy arguments and return type is defined by type annotations.
     """
-    def factory(ctx: FunctionContext) -> MypyType:
+    def factory(ctx):
         if not (sym and sym.type and isinstance(sym.type, CallableType)):
             return ctx.default_return_type
 
@@ -43,10 +44,10 @@ def analyze(
 
 
 def _change_decorator_function_type(
-    decorator: CallableType,
-    arg_type: CallableType,
-) -> CallableType:
-    """Replaces revealed argument types by mypy with types from decorated."""
+    decorator,
+    arg_type,
+):
+    u"""Replaces revealed argument types by mypy with types from decorated."""
     return decorator.copy_modified(
         arg_types=arg_type.arg_types,
         arg_kinds=arg_type.arg_kinds,

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import ABCMeta
 from functools import wraps
 from inspect import FrameInfo
@@ -26,24 +27,24 @@ from returns.primitives.hkt import (
 )
 from returns.result import Failure, Result, Success
 
-_ValueType = TypeVar('_ValueType', covariant=True)
-_NewValueType = TypeVar('_NewValueType')
+_ValueType = TypeVar(u'_ValueType', covariant=True)
+_NewValueType = TypeVar(u'_NewValueType')
 
 # Result related:
-_ErrorType = TypeVar('_ErrorType', covariant=True)
-_NewErrorType = TypeVar('_NewErrorType')
+_ErrorType = TypeVar(u'_ErrorType', covariant=True)
+_NewErrorType = TypeVar(u'_NewErrorType')
 
 # Helpers:
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
 
 class IO(
     BaseContainer,
-    SupportsKind1['IO', _ValueType],
+    SupportsKind1[u'IO', _ValueType],
     io.IOLike1[_ValueType],
 ):
-    """
+    u"""
     Explicit container for impure function results.
 
     We also sometimes call it "marker" since once it is marked,
@@ -73,8 +74,8 @@ class IO(
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
 
-    def __init__(self, inner_value: _ValueType) -> None:
-        """
+    def __init__(self, inner_value):
+        u"""
         Public constructor for this type. Also required for typing.
 
         .. code:: python
@@ -83,13 +84,13 @@ class IO(
           >>> assert str(IO(1)) == '<IO: 1>'
 
         """
-        super().__init__(inner_value)
+        super(IO, self).__init__(inner_value)
 
     def map(
         self,
-        function: Callable[[_ValueType], _NewValueType],
-    ) -> 'IO[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Applies function to the inner value.
 
         Applies 'function' to the contents of the IO instance
@@ -109,9 +110,9 @@ class IO(
 
     def apply(
         self,
-        container: Kind1['IO', Callable[[_ValueType], _NewValueType]],
-    ) -> 'IO[_NewValueType]':
-        """
+        container,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -137,9 +138,9 @@ class IO(
 
     def bind(
         self,
-        function: Callable[[_ValueType], Kind1['IO', _NewValueType]],
-    ) -> 'IO[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Applies 'function' to the result of a previous calculation.
 
         'function' should accept a single "normal" (non-container) argument
@@ -159,8 +160,8 @@ class IO(
     bind_io = bind
 
     @classmethod
-    def from_value(cls, inner_value: _NewValueType) -> 'IO[_NewValueType]':
-        """
+    def from_value(cls, inner_value):
+        u"""
         Unit function to construct new ``IO`` values.
 
         Is the same as regular constructor:
@@ -176,8 +177,8 @@ class IO(
         return IO(inner_value)
 
     @classmethod
-    def from_io(cls, inner_value: 'IO[_NewValueType]') -> 'IO[_NewValueType]':
-        """
+    def from_io(cls, inner_value):
+        u"""
         Unit function to construct new ``IO`` values from existing ``IO``.
 
         .. code:: python
@@ -193,9 +194,9 @@ class IO(
     @classmethod
     def from_ioresult(
         cls,
-        inner_value: 'IOResult[_NewValueType, _NewErrorType]',
-    ) -> 'IO[Result[_NewValueType, _NewErrorType]]':
-        """
+        inner_value,
+    ):
+        u"""
         Converts ``IOResult[a, b]`` back to ``IO[Result[a, b]]``.
 
         Can be really helpful for composition.
@@ -214,9 +215,9 @@ class IO(
 # Helper functions:
 
 def impure(
-    function: Callable[..., _NewValueType],
-) -> Callable[..., IO[_NewValueType]]:
-    """
+    function,
+):
+    u"""
     Decorator to mark function that it returns :class:`~IO` container.
 
     If you need to mark ``async`` function as impure,
@@ -247,11 +248,11 @@ def impure(
 
 class IOResult(
     BaseContainer,
-    SupportsKind2['IOResult', _ValueType, _ErrorType],
+    SupportsKind2[u'IOResult', _ValueType, _ErrorType],
     ioresult.IOResultBased2[_ValueType, _ErrorType],
-    metaclass=ABCMeta,
 ):
-    """
+    __metaclass__ = ABCMeta
+    u"""
     Explicit container for impure function results that might fail.
 
     .. rubric:: Definition
@@ -307,28 +308,28 @@ class IOResult(
     """
 
     _inner_value: Result[_ValueType, _ErrorType]
-    __match_args__ = ('_inner_value',)
+    __match_args__ = (u'_inner_value',)
 
     # These two are required for projects like `classes`:
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type['IOSuccess']]
+    success_type: ClassVar[Type[u'IOSuccess']]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type['IOFailure']]
+    failure_type: ClassVar[Type[u'IOFailure']]
 
     #: Typesafe equality comparison with other `IOResult` objects.
     equals = container_equality
 
-    def __init__(self, inner_value: Result[_ValueType, _ErrorType]) -> None:
-        """
+    def __init__(self, inner_value):
+        u"""
         Private type constructor.
 
         Use :func:`~IOSuccess` and :func:`~IOFailure` instead.
         Or :meth:`~IOResult.from_result` factory.
         """
-        super().__init__(inner_value)
+        super(IOResult, self).__init__(inner_value)
 
-    def __repr__(self) -> str:
-        """
+    def __repr__(self):
+        u"""
         Custom ``str`` representation for better readability.
 
         .. code:: python
@@ -340,15 +341,15 @@ class IOResult(
           '<IOResult: <Failure: wrong!>>'
 
         """
-        return '<IOResult: {0}>'.format(str(self._inner_value))
+        return u'<IOResult: {0}>'.format(unicode(self._inner_value))
 
     @property
-    def trace(self) -> Optional[List[FrameInfo]]:
-        """Returns a stack trace when :func:`~IOFailure` was called."""
+    def trace(self):
+        u"""Returns a stack trace when :func:`~IOFailure` was called."""
         return self._inner_value.trace
 
-    def swap(self) -> 'IOResult[_ErrorType, _ValueType]':
-        """
+    def swap(self):
+        u"""
         Swaps value and error types.
 
         So, values become errors and errors become values.
@@ -366,9 +367,9 @@ class IOResult(
         return self.from_result(self._inner_value.swap())
 
     def map(
-        self, function: Callable[[_ValueType], _NewValueType],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        self, function,
+    ):
+        u"""
         Composes successful container with a pure function.
 
         .. code:: python
@@ -381,13 +382,9 @@ class IOResult(
 
     def apply(
         self,
-        container: Kind2[
-            'IOResult',
-            Callable[[_ValueType], _NewValueType],
-            _ErrorType,
-        ],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        container,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -420,12 +417,9 @@ class IOResult(
 
     def bind(
         self,
-        function: Callable[
-            [_ValueType],
-            Kind2['IOResult', _NewValueType, _ErrorType],
-        ],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a function that returns a container.
 
         .. code:: python
@@ -447,12 +441,9 @@ class IOResult(
 
     def bind_result(
         self,
-        function: Callable[
-            [_ValueType],
-            Result[_NewValueType, _ErrorType],
-        ],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a function that returns a container.
 
         Similar to :meth:`~IOResult.bind`, but works with containers
@@ -477,9 +468,9 @@ class IOResult(
 
     def bind_io(
         self,
-        function: Callable[[_ValueType], IO[_NewValueType]],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a function that returns a container.
 
         Similar to :meth:`~IOResult.bind`, but works with containers
@@ -499,9 +490,9 @@ class IOResult(
 
     def alt(
         self,
-        function: Callable[[_ErrorType], _NewErrorType],
-    ) -> 'IOResult[_ValueType, _NewErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes failed container with a pure function to modify failure.
 
         .. code:: python
@@ -514,12 +505,9 @@ class IOResult(
 
     def lash(
         self,
-        function: Callable[
-            [_ErrorType],
-            Kind2['IOResult', _ValueType, _NewErrorType],
-        ],
-    ) -> 'IOResult[_ValueType, _NewErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes failed container with a function that returns a container.
 
         .. code:: python
@@ -538,9 +526,9 @@ class IOResult(
 
     def value_or(
         self,
-        default_value: _NewValueType,
-    ) -> IO[Union[_ValueType, _NewValueType]]:
-        """
+        default_value,
+    ):
+        u"""
         Get value from successful container or default value from failed one.
 
         .. code:: python
@@ -552,8 +540,8 @@ class IOResult(
         """
         return IO(self._inner_value.value_or(default_value))
 
-    def unwrap(self) -> IO[_ValueType]:
-        """
+    def unwrap(self):
+        u"""
         Get value from successful container or raise exception for failed one.
 
         .. code:: pycon
@@ -570,8 +558,8 @@ class IOResult(
         """  # noqa: RST307
         return IO(self._inner_value.unwrap())
 
-    def failure(self) -> IO[_ErrorType]:
-        """
+    def failure(self):
+        u"""
         Get failed value from failed container or raise exception from success.
 
         .. code:: pycon
@@ -590,12 +578,9 @@ class IOResult(
 
     def compose_result(
         self,
-        function: Callable[
-            [Result[_ValueType, _ErrorType]],
-            Kind2['IOResult', _NewValueType, _ErrorType],
-        ],
-    ) -> 'IOResult[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes inner ``Result`` with ``IOResult`` returning function.
 
         Can be useful when you need an access to both states of the result.
@@ -618,9 +603,9 @@ class IOResult(
 
     @classmethod
     def from_typecast(
-        cls, inner_value: IO[Result[_NewValueType, _NewErrorType]],
-    ) -> 'IOResult[_NewValueType, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Converts ``IO[Result[_ValueType, _ErrorType]]`` to ``IOResult``.
 
         Also prevails the type of ``Result`` to ``IOResult``, so:
@@ -640,9 +625,9 @@ class IOResult(
 
     @classmethod
     def from_failed_io(
-        cls, inner_value: IO[_NewErrorType],
-    ) -> 'IOResult[Any, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new ``IOResult`` from "failed" ``IO`` container.
 
         .. code:: python
@@ -656,9 +641,9 @@ class IOResult(
 
     @classmethod
     def from_io(
-        cls, inner_value: IO[_NewValueType],
-    ) -> 'IOResult[_NewValueType, Any]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new ``IOResult`` from "successful" ``IO`` container.
 
         .. code:: python
@@ -672,9 +657,9 @@ class IOResult(
 
     @classmethod
     def from_result(
-        cls, inner_value: Result[_NewValueType, _NewErrorType],
-    ) -> 'IOResult[_NewValueType, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates ``IOResult`` from ``Result`` value.
 
         .. code:: python
@@ -692,9 +677,9 @@ class IOResult(
 
     @classmethod
     def from_ioresult(
-        cls, inner_value: 'IOResult[_NewValueType, _NewErrorType]',
-    ) -> 'IOResult[_NewValueType, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates ``IOResult`` from existing ``IOResult`` value.
 
         .. code:: python
@@ -709,9 +694,9 @@ class IOResult(
 
     @classmethod
     def from_value(
-        cls, inner_value: _NewValueType,
-    ) -> 'IOResult[_NewValueType, Any]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         One more value to create success unit values.
 
         It is useful as a united way to create a new value from any container.
@@ -729,9 +714,9 @@ class IOResult(
 
     @classmethod
     def from_failure(
-        cls, inner_value: _NewErrorType,
-    ) -> 'IOResult[Any, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         One more value to create failure unit values.
 
         It is useful as a united way to create a new value from any container.
@@ -748,67 +733,69 @@ class IOResult(
         return IOFailure(inner_value)
 
 
-@final
 class IOFailure(IOResult[Any, _ErrorType]):
-    """``IOFailure`` representation."""
+    u"""``IOFailure`` representation."""
 
     _inner_value: Result[Any, _ErrorType]
 
-    def __init__(self, inner_value: _ErrorType) -> None:
-        """IOFailure constructor."""  # noqa: D403
-        super().__init__(Failure(inner_value))
+    def __init__(self, inner_value):
+        u"""IOFailure constructor."""  # noqa: D403
+        super(IOFailure, self).__init__(Failure(inner_value))
 
     if not TYPE_CHECKING:  # noqa: WPS604  # pragma: no branch
         def bind(self, function):
-            """Does nothing for ``IOFailure``."""
+            u"""Does nothing for ``IOFailure``."""
             return self
 
         #: Alias for `bind_ioresult` method. Part of the `IOResultBasedN` interface.  # noqa: E501
         bind_ioresult = bind
 
         def bind_result(self, function):
-            """Does nothing for ``IOFailure``."""
+            u"""Does nothing for ``IOFailure``."""
             return self
 
         def bind_io(self, function):
-            """Does nothing for ``IOFailure``."""
+            u"""Does nothing for ``IOFailure``."""
             return self
 
         def lash(self, function):
-            """Composes this container with a function returning ``IOResult``."""  # noqa: E501
+            u"""Composes this container with a function returning ``IOResult``."""  # noqa: E501
             return function(self._inner_value.failure())
 
 
-@final
+IOFailure = final(IOFailure)
+
 class IOSuccess(IOResult[_ValueType, Any]):
-    """``IOSuccess`` representation."""
+    u"""``IOSuccess`` representation."""
 
     _inner_value: Result[_ValueType, Any]
 
-    def __init__(self, inner_value: _ValueType) -> None:
-        """IOSuccess constructor."""  # noqa: D403
-        super().__init__(Success(inner_value))
+    def __init__(self, inner_value):
+        u"""IOSuccess constructor."""  # noqa: D403
+        super(IOSuccess, self).__init__(Success(inner_value))
 
     if not TYPE_CHECKING:  # noqa: WPS604  # pragma: no branch
         def bind(self, function):
-            """Composes this container with a function returning ``IOResult``."""  # noqa: E501
+            u"""Composes this container with a function returning ``IOResult``."""  # noqa: E501
             return function(self._inner_value.unwrap())
 
         #: Alias for `bind_ioresult` method. Part of the `IOResultBasedN` interface.  # noqa: E501
         bind_ioresult = bind
 
         def bind_result(self, function):
-            """Binds ``Result`` returning function to current container."""
+            u"""Binds ``Result`` returning function to current container."""
             return self.from_result(function(self._inner_value.unwrap()))
 
         def bind_io(self, function):
-            """Binds ``IO`` returning function to current container."""
+            u"""Binds ``IO`` returning function to current container."""
             return self.from_io(function(self._inner_value.unwrap()))
 
         def lash(self, function):
-            """Does nothing for ``IOSuccess``."""
+            u"""Does nothing for ``IOSuccess``."""
             return self
 
+
+IOSuccess = final(IOSuccess)
 
 IOResult.success_type = IOSuccess
 IOResult.failure_type = IOFailure
@@ -823,9 +810,9 @@ IOResultE = IOResult[_ValueType, Exception]
 # impure_safe decorator:
 
 def impure_safe(
-    function: Callable[..., _NewValueType],
-) -> Callable[..., IOResultE[_NewValueType]]:
-    """
+    function,
+):
+    u"""
     Decorator to mark function that it returns :class:`~IOResult` container.
 
     Should be used with care, since it only catches ``Exception`` subclasses.
@@ -856,6 +843,6 @@ def impure_safe(
     def decorator(*args, **kwargs):
         try:
             return IOSuccess(function(*args, **kwargs))
-        except Exception as exc:
+        except Exception, exc:
             return IOFailure(exc)
     return decorator

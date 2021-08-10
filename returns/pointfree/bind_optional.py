@@ -1,23 +1,21 @@
+from __future__ import absolute_import
 from typing import Callable, Optional, TypeVar
 
 from returns.interfaces.specific.maybe import MaybeLikeN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_MaybeLikeKind = TypeVar('_MaybeLikeKind', bound=MaybeLikeN)
+_MaybeLikeKind = TypeVar(u'_MaybeLikeKind', bound=MaybeLikeN)
 
 
 def bind_optional(
-    function: Callable[[_FirstType], Optional[_UpdatedType]],
-) -> Kinded[Callable[
-    [KindN[_MaybeLikeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_MaybeLikeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Binds a function returning optional value over a container.
 
     In other words, it modifies the function's
@@ -47,7 +45,7 @@ def bind_optional(
     """
     @kinded
     def factory(
-        container: KindN[_MaybeLikeKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_MaybeLikeKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_optional(function)
     return factory

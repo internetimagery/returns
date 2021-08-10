@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, Iterable, Tuple, TypeVar
 
@@ -7,17 +8,17 @@ from returns.interfaces.applicative import ApplicativeN
 from returns.interfaces.failable import FailableN
 from returns.primitives.hkt import KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ApplicativeKind = TypeVar('_ApplicativeKind', bound=ApplicativeN)
-_FailableKind = TypeVar('_FailableKind', bound=FailableN)
+_ApplicativeKind = TypeVar(u'_ApplicativeKind', bound=ApplicativeN)
+_FailableKind = TypeVar(u'_FailableKind', bound=FailableN)
 
 
 class AbstractFold(object):
-    """
+    u"""
     A collection of different helpers to write declarative ``Iterable`` actions.
 
     Allows to work with iterables.
@@ -49,16 +50,11 @@ class AbstractFold(object):
     @classmethod
     def loop(
         cls,
-        iterable: Iterable[
-            KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-        function: Callable[
-            [_FirstType],
-            Callable[[_UpdatedType], _UpdatedType],
-        ],
-    ) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]:
-        """
+        iterable,
+        acc,
+        function,
+    ):
+        u"""
         Allows to make declarative loops for any ``ApplicativeN`` subtypes.
 
         Quick example:
@@ -94,22 +90,10 @@ class AbstractFold(object):
     @classmethod
     def collect(
         cls,
-        iterable: Iterable[
-            KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[
-            _ApplicativeKind,
-            'Tuple[_FirstType, ...]',
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[
-        _ApplicativeKind,
-        'Tuple[_FirstType, ...]',
-        _SecondType,
-        _ThirdType,
-    ]:
-        """
+        iterable,
+        acc,
+    ):
+        u"""
         Transforms an iterable of containers into a single container.
 
         Quick example for regular containers:
@@ -159,22 +143,10 @@ class AbstractFold(object):
     @classmethod
     def collect_all(
         cls,
-        iterable: Iterable[
-            KindN[_FailableKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[
-            _FailableKind,
-            'Tuple[_FirstType, ...]',
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[
-        _FailableKind,
-        'Tuple[_FirstType, ...]',
-        _SecondType,
-        _ThirdType,
-    ]:
-        """
+        iterable,
+        acc,
+    ):
+        u"""
         Transforms an iterable of containers into a single container.
 
         This method only works with ``FailableN`` subtypes,
@@ -225,32 +197,12 @@ class AbstractFold(object):
     @abstractmethod
     def _loop(
         cls,
-        iterable: Iterable[
-            KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-        function: Callable[
-            [_FirstType],
-            Callable[[_UpdatedType], _UpdatedType],
-        ],
-        concat: Callable[
-            [
-                KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-                KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-                KindN[
-                    _ApplicativeKind,
-                    Callable[
-                        [_FirstType],
-                        Callable[[_UpdatedType], _UpdatedType],
-                    ],
-                    _SecondType,
-                    _ThirdType,
-                ],
-            ],
-            KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-        ],
-    ) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]:
-        """
+        iterable,
+        acc,
+        function,
+        concat,
+    ):
+        u"""
         Protected part of ``loop`` method.
 
         Can be replaced in subclasses for better performance, etc.
@@ -259,21 +211,9 @@ class AbstractFold(object):
     @classmethod
     def _collect(
         cls,
-        iterable: Iterable[
-            KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[
-            _ApplicativeKind,
-            'Tuple[_FirstType, ...]',
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[
-        _ApplicativeKind,
-        'Tuple[_FirstType, ...]',
-        _SecondType,
-        _ThirdType,
-    ]:
+        iterable,
+        acc,
+    ):
         return cls._loop(
             iterable,
             acc,
@@ -284,21 +224,9 @@ class AbstractFold(object):
     @classmethod
     def _collect_all(
         cls,
-        iterable: Iterable[
-            KindN[_FailableKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[
-            _FailableKind,
-            'Tuple[_FirstType, ...]',
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[
-        _FailableKind,
-        'Tuple[_FirstType, ...]',
-        _SecondType,
-        _ThirdType,
-    ]:
+        iterable,
+        acc,
+    ):
         return cls._loop(
             iterable,
             acc,
@@ -308,7 +236,7 @@ class AbstractFold(object):
 
 
 class Fold(AbstractFold):
-    """
+    u"""
     Concrete implementation of ``AbstractFold`` of end users.
 
     Use it by default.
@@ -317,32 +245,12 @@ class Fold(AbstractFold):
     @classmethod
     def _loop(
         cls,
-        iterable: Iterable[
-            KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-        ],
-        acc: KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-        function: Callable[
-            [_FirstType],
-            Callable[[_UpdatedType], _UpdatedType],
-        ],
-        concat: Callable[
-            [
-                KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType],
-                KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-                KindN[
-                    _ApplicativeKind,
-                    Callable[
-                        [_FirstType],
-                        Callable[[_UpdatedType], _UpdatedType],
-                    ],
-                    _SecondType,
-                    _ThirdType,
-                ],
-            ],
-            KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType],
-        ],
-    ) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]:
-        """
+        iterable,
+        acc,
+        function,
+        concat,
+    ):
+        u"""
         Protected part of ``loop`` method.
 
         Can be replaced in subclasses for better performance, etc.
@@ -357,12 +265,9 @@ class Fold(AbstractFold):
 # ================
 
 def _concat_sequence(
-    first: _FirstType,
-) -> Callable[
-    ['Tuple[_FirstType, ...]'],
-    'Tuple[_FirstType, ...]',
-]:
-    """
+    first,
+):
+    u"""
     Concats a given item to an existing sequence.
 
     We use explicit curring with ``lambda`` function because,
@@ -373,38 +278,20 @@ def _concat_sequence(
 
 
 def _concat_applicative(
-    current: KindN[
-        _ApplicativeKind, _FirstType, _SecondType, _ThirdType,
-    ],
-    acc: KindN[
-        _ApplicativeKind, _UpdatedType, _SecondType, _ThirdType,
-    ],
-    function: KindN[
-        _ApplicativeKind,
-        Callable[[_FirstType], Callable[[_UpdatedType], _UpdatedType]],
-        _SecondType,
-        _ThirdType,
-    ],
-) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]:
-    """Concats two applicatives using a curried-like function."""
+    current,
+    acc,
+    function,
+):
+    u"""Concats two applicatives using a curried-like function."""
     return acc.apply(current.apply(function))
 
 
 def _concat_failable_safely(
-    current: KindN[
-        _FailableKind, _FirstType, _SecondType, _ThirdType,
-    ],
-    acc: KindN[
-        _FailableKind, _UpdatedType, _SecondType, _ThirdType,
-    ],
-    function: KindN[
-        _FailableKind,
-        Callable[[_FirstType], Callable[[_UpdatedType], _UpdatedType]],
-        _SecondType,
-        _ThirdType,
-    ],
-) -> KindN[_FailableKind, _UpdatedType, _SecondType, _ThirdType]:
-    """
+    current,
+    acc,
+    function,
+):
+    u"""
     Concats two ``FailableN`` using a curried-like function and a fallback.
 
     We need both ``.apply`` and ``.lash`` methods here.

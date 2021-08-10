@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Iterable, List, Optional
 
 from mypy.typeops import erase_to_bound
@@ -38,8 +39,8 @@ _LEAF_TYPES = (
 )
 
 
-def translate_kind_instance(typ: Type) -> Type:  # noqa: WPS, C901
-    """
+def translate_kind_instance(typ):  # noqa: WPS, C901
+    u"""
     We use this ugly hack to translate ``KindN[x, y]`` into ``x[y]``.
 
     This is required due to the fact that ``KindN``
@@ -82,10 +83,9 @@ def translate_kind_instance(typ: Type) -> Type:  # noqa: WPS, C901
             typ.column,
         )
     elif isinstance(typ, TypedDictType):
-        dict_items = {
-            item_name: translate_kind_instance(item_type)
-            for item_name, item_type in typ.items.items()
-        }
+        dict_items = dict((
+            item_name, translate_kind_instance(item_type))
+            for item_name, item_type in typ.items.items())
         return TypedDictType(
             dict_items,
             typ.required_keys,
@@ -120,12 +120,12 @@ def translate_kind_instance(typ: Type) -> Type:  # noqa: WPS, C901
     return typ
 
 
-def _translate_types(types: Iterable[Type]) -> List[Type]:
+def _translate_types(types):
     return [translate_kind_instance(typ) for typ in types]
 
 
-def _process_kinded_type(kind: Instance) -> Type:
-    """Recursively process all type arguments in a kind."""
+def _process_kinded_type(kind):
+    u"""Recursively process all type arguments in a kind."""
     if not kind.args:
         return kind
 

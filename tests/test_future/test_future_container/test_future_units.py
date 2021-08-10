@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 from typing import Any, Awaitable, List
 
 import pytest
@@ -8,7 +10,7 @@ from returns.io import IO
 
 @pytest.mark.anyio()
 async def test_inner_value(subtests):
-    """Ensure that coroutine correct value is preserved for all units."""
+    u"""Ensure that coroutine correct value is preserved for all units."""
     containers: List[Awaitable[Any]] = [
         # We have to define these values inside the test, because
         # otherwise `anyio` will `await` reused coroutines.

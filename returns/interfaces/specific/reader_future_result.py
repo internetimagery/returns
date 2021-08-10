@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -26,18 +27,18 @@ if TYPE_CHECKING:
     from returns.context import ReaderFutureResult  # noqa: WPS433
     from returns.future import FutureResult  # noqa: F401, WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
-_EnvType = TypeVar('_EnvType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
+_EnvType = TypeVar(u'_EnvType')
 
 _ReaderFutureResultLikeType = TypeVar(
-    '_ReaderFutureResultLikeType',
-    bound='ReaderFutureResultLikeN',
+    u'_ReaderFutureResultLikeType',
+    bound=u'ReaderFutureResultLikeN',
 )
 
 
@@ -45,7 +46,7 @@ class ReaderFutureResultLikeN(
     reader_ioresult.ReaderIOResultLikeN[_FirstType, _SecondType, _ThirdType],
     future_result.FutureResultLikeN[_FirstType, _SecondType, _ThirdType],
 ):
-    """
+    u"""
     Interface for all types that do look like ``ReaderFutureResult`` instance.
 
     Cannot be called.
@@ -53,43 +54,25 @@ class ReaderFutureResultLikeN(
 
     @abstractmethod
     def bind_context_future_result(
-        self: _ReaderFutureResultLikeType,
-        function: Callable[
-            [_FirstType],
-            'ReaderFutureResult[_UpdatedType, _SecondType, _ThirdType]',
-        ],
-    ) -> KindN[
-        _ReaderFutureResultLikeType,
-        _UpdatedType,
-        _SecondType,
-        _ThirdType,
-    ]:
-        """Bind a ``ReaderFutureResult`` returning function over a container."""
+        self,
+        function,
+    ):
+        u"""Bind a ``ReaderFutureResult`` returning function over a container."""
 
     @abstractmethod
     def bind_async_context_future_result(
-        self: _ReaderFutureResultLikeType,
-        function: Callable[
-            [_FirstType],
-            Awaitable[
-                'ReaderFutureResult[_UpdatedType, _SecondType, _ThirdType]',
-            ],
-        ],
-    ) -> KindN[
-        _ReaderFutureResultLikeType,
-        _UpdatedType,
-        _SecondType,
-        _ThirdType,
-    ]:
-        """Bind async ``ReaderFutureResult`` function."""
+        self,
+        function,
+    ):
+        u"""Bind async ``ReaderFutureResult`` function."""
 
     @classmethod
     @abstractmethod
     def from_future_result_context(
-        cls: Type[_ReaderFutureResultLikeType],  # noqa: N805
-        inner_value: 'ReaderFutureResult[_ValueType, _ErrorType, _EnvType]',
-    ) -> KindN[_ReaderFutureResultLikeType, _ValueType, _ErrorType, _EnvType]:
-        """Unit method to create new containers from ``ReaderFutureResult``."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from ``ReaderFutureResult``."""
 
 
 #: Type alias for kinds with three type arguments.
@@ -99,7 +82,7 @@ ReaderFutureResultLike3 = ReaderFutureResultLikeN[
 
 
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Concrete laws for ``ReaderFutureResultBasedN``.
 
     See: https://github.com/haskell/mtl/pull/61/files
@@ -107,11 +90,10 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def asking_law(
-        container:
-            ReaderFutureResultBasedN[_FirstType, _SecondType, _ThirdType],
-        env: _ThirdType,
-    ) -> None:
-        """Asking for an env, always returns the env."""
+        container,
+        env,
+    ):
+        u"""Asking for an env, always returns the env."""
         assert_equal(
             container.ask().__call__(env),  # noqa: WPS609
             container.from_value(env).__call__(env),  # noqa: WPS609
@@ -125,12 +107,12 @@ class ReaderFutureResultBasedN(
         _SecondType,
         _ThirdType,
         # Calls:
-        'FutureResult[_FirstType, _SecondType]',
+        u'FutureResult[_FirstType, _SecondType]',
         _ThirdType,
     ],
-    Lawful['ReaderFutureResultBasedN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'ReaderFutureResultBasedN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     This interface is very specific to our ``ReaderFutureResult`` type.
 
     The only thing that differs from ``ReaderFutureResultLikeN``

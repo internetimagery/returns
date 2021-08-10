@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import types
 from contextlib import contextmanager
 from inspect import FrameInfo, stack
@@ -14,23 +15,23 @@ from typing import (
 
 from returns.result import Failure
 
-_FunctionType = TypeVar('_FunctionType', bound=Callable)
+_FunctionType = TypeVar(u'_FunctionType', bound=Callable)
 
 
 @overload
-def collect_traces() -> ContextManager[None]:
-    """Context Manager to active traces collect to the Failures."""
+def collect_traces():
+    u"""Context Manager to active traces collect to the Failures."""
 
 
 @overload
-def collect_traces(function: _FunctionType) -> _FunctionType:
-    """Decorator to active traces collect to the Failures."""
+def collect_traces(function):
+    u"""Decorator to active traces collect to the Failures."""
 
 
 def collect_traces(
-    function: Optional[_FunctionType] = None,
-) -> Union[_FunctionType, ContextManager[None]]:  # noqa: DAR101, DAR201, DAR301
-    """
+    function = None,
+):  # noqa: DAR101, DAR201, DAR301
+    u"""
     Context Manager/Decorator to active traces collect to the Failures.
 
     .. code:: python
@@ -59,19 +60,19 @@ def collect_traces(
 
     """
     @contextmanager
-    def factory() -> Iterator[None]:
-        unpatched_get_trace = getattr(Failure, '_get_trace')  # noqa: B009
+    def factory():
+        unpatched_get_trace = getattr(Failure, u'_get_trace')  # noqa: B009
         substitute_get_trace = types.MethodType(_get_trace, Failure)
-        setattr(Failure, '_get_trace', substitute_get_trace)  # noqa: B010
+        setattr(Failure, u'_get_trace', substitute_get_trace)  # noqa: B010
         try:  # noqa: WPS501
             yield
         finally:
-            setattr(Failure, '_get_trace', unpatched_get_trace)  # noqa: B010
+            setattr(Failure, u'_get_trace', unpatched_get_trace)  # noqa: B010
     return factory()(function) if function else factory()
 
 
-def _get_trace(_self: Failure) -> Optional[List[FrameInfo]]:
-    """
+def _get_trace(_self):
+    u"""
     Function to be used on Monkey Patching.
 
     This function is the substitute for '_get_trace' method from ``Failure``

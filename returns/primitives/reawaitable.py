@@ -1,18 +1,18 @@
 
+from __future__ import absolute_import
 from typing import Awaitable, Callable, Generator, NewType, TypeVar, Union, cast
 
 from typing_extensions import final
 
-_ValueType = TypeVar('_ValueType')
-_FunctionCoroType = TypeVar('_FunctionCoroType', bound=Callable[..., Awaitable])
+_ValueType = TypeVar(u'_ValueType')
+_FunctionCoroType = TypeVar(u'_FunctionCoroType', bound=Callable[..., Awaitable])
 
-_Sentinel = NewType('_Sentinel', object)
+_Sentinel = NewType(u'_Sentinel', object)
 _sentinel: _Sentinel = cast(_Sentinel, object())
 
 
-@final
 class ReAwaitable(object):
-    """
+    u"""
     Allows to write coroutines that can be awaited multiple times.
 
     It works by actually caching the ``await`` result and reusing it.
@@ -48,15 +48,15 @@ class ReAwaitable(object):
 
     """
 
-    __slots__ = ('_coro', '_cache')
+    __slots__ = (u'_coro', u'_cache')
 
-    def __init__(self, coro: Awaitable[_ValueType]) -> None:
-        """We need just an awaitable to work with."""
+    def __init__(self, coro):
+        u"""We need just an awaitable to work with."""
         self._coro = coro
         self._cache: Union[_ValueType, _Sentinel] = _sentinel
 
-    def __await__(self) -> Generator[None, None, _ValueType]:
-        """
+    def __await__(self):
+        u"""
         Allows to use ``await`` multiple times.
 
         .. code:: python
@@ -81,8 +81,8 @@ class ReAwaitable(object):
         """
         return self._awaitable().__await__()  # noqa: WPS609
 
-    def __repr__(self) -> str:
-        """
+    def __repr__(self):
+        u"""
         Formats this type the same way as the coroutine underneath.
 
         .. code:: python
@@ -99,15 +99,17 @@ class ReAwaitable(object):
         """
         return repr(self._coro)
 
-    async def _awaitable(self) -> _ValueType:
-        """Caches the once awaited value forever."""
+    async def _awaitable(self):
+        u"""Caches the once awaited value forever."""
         if self._cache is _sentinel:
             self._cache = await self._coro
         return self._cache  # type: ignore
 
 
-def reawaitable(coro: _FunctionCoroType) -> _FunctionCoroType:
-    """
+ReAwaitable = final(ReAwaitable)
+
+def reawaitable(coro):
+    u"""
     Allows to decorate coroutine functions to be awaitable multiple times.
 
     .. code:: python

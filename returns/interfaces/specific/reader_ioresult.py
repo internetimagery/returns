@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -17,18 +18,18 @@ if TYPE_CHECKING:
     from returns.context import ReaderIOResult  # noqa: WPS433
     from returns.io import IOResult  # noqa: F401, WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
-_EnvType = TypeVar('_EnvType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
+_EnvType = TypeVar(u'_EnvType')
 
 _ReaderIOResultLikeType = TypeVar(
-    '_ReaderIOResultLikeType',
-    bound='ReaderIOResultLikeN',
+    u'_ReaderIOResultLikeType',
+    bound=u'ReaderIOResultLikeN',
 )
 
 
@@ -36,7 +37,7 @@ class ReaderIOResultLikeN(
     reader_result.ReaderResultLikeN[_FirstType, _SecondType, _ThirdType],
     ioresult.IOResultLikeN[_FirstType, _SecondType, _ThirdType],
 ):
-    """
+    u"""
     Base interface for all types that do look like ``ReaderIOResult`` instance.
 
     Cannot be called.
@@ -44,21 +45,18 @@ class ReaderIOResultLikeN(
 
     @abstractmethod
     def bind_context_ioresult(
-        self: _ReaderIOResultLikeType,
-        function: Callable[
-            [_FirstType],
-            'ReaderIOResult[_UpdatedType, _SecondType, _ThirdType]',
-        ],
-    ) -> KindN[_ReaderIOResultLikeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Binds a ``ReaderIOResult`` returning function over a container."""
+        self,
+        function,
+    ):
+        u"""Binds a ``ReaderIOResult`` returning function over a container."""
 
     @classmethod
     @abstractmethod
     def from_ioresult_context(
-        cls: Type[_ReaderIOResultLikeType],  # noqa: N805
-        inner_value: 'ReaderIOResult[_ValueType, _ErrorType, _EnvType]',
-    ) -> KindN[_ReaderIOResultLikeType, _ValueType, _ErrorType, _EnvType]:
-        """Unit method to create new containers from ``ReaderIOResult``."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from ``ReaderIOResult``."""
 
 
 #: Type alias for kinds with three type arguments.
@@ -66,7 +64,7 @@ ReaderIOResultLike3 = ReaderIOResultLikeN[_FirstType, _SecondType, _ThirdType]
 
 
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Concrete laws for ``ReaderIOResultBasedN``.
 
     See: https://github.com/haskell/mtl/pull/61/files
@@ -74,10 +72,10 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def asking_law(
-        container: ReaderIOResultBasedN[_FirstType, _SecondType, _ThirdType],
-        env: _ThirdType,
-    ) -> None:
-        """Asking for an env, always returns the env."""
+        container,
+        env,
+    ):
+        u"""Asking for an env, always returns the env."""
         assert container.ask().__call__(    # noqa: WPS609
             env,
         ) == container.from_value(env).__call__(env)  # noqa: WPS609
@@ -90,12 +88,12 @@ class ReaderIOResultBasedN(
         _SecondType,
         _ThirdType,
         # Calls:
-        'IOResult[_FirstType, _SecondType]',
+        u'IOResult[_FirstType, _SecondType]',
         _ThirdType,
     ],
-    Lawful['ReaderIOResultBasedN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'ReaderIOResultBasedN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     This interface is very specific to our ``ReaderIOResult`` type.
 
     The only thing that differs from ``ReaderIOResultLikeN`` is that we know

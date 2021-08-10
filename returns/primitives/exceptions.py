@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -7,23 +8,23 @@ if TYPE_CHECKING:
 
 
 class UnwrapFailedError(Exception):
-    """Raised when a container can not be unwrapped into a meaningful value."""
+    u"""Raised when a container can not be unwrapped into a meaningful value."""
 
-    __slots__ = ('halted_container',)
+    __slots__ = (u'halted_container',)
 
-    def __init__(self, container: 'Unwrappable') -> None:
-        """
+    def __init__(self, container):
+        u"""
         Saves halted container in the inner state.
 
         So, this container can later be unpacked from this exception
         and used as a regular value.
         """
-        super().__init__()
+        super(UnwrapFailedError, self).__init__()
         self.halted_container = container
 
 
 class ImmutableStateError(AttributeError):
-    """
+    u"""
     Raised when a container is forced to be mutated.
 
     It is a sublclass of ``AttributeError`` for two reasons:

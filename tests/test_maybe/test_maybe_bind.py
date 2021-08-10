@@ -1,23 +1,24 @@
+from __future__ import absolute_import
 from typing import Optional
 
 from returns.maybe import Maybe, Nothing, Some
 
 
 def test_bind_some():
-    """Ensures that bind works correctly."""
-    def factory(inner_value: int) -> Maybe[int]:
+    u"""Ensures that bind works correctly."""
+    def factory(inner_value):
         return Some(inner_value * 2)
 
     input_value = 5
     bound = Some(input_value).bind(factory)
 
     assert bound == factory(input_value)
-    assert str(bound) == '<Some: 10>'
+    assert unicode(bound) == u'<Some: 10>'
 
 
 def test_bind_optional():
-    """Ensures that bind_optional works correctly."""
-    def factory(inner_value: int) -> Optional[int]:
+    u"""Ensures that bind_optional works correctly."""
+    def factory(inner_value):
         return inner_value if inner_value else None
 
     assert Some(1).bind_optional(factory) == Some(1)

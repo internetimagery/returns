@@ -1,5 +1,6 @@
-"""This module was quite a big one, so we have split it."""
+u"""This module was quite a big one, so we have split it."""
 
+from __future__ import absolute_import
 from returns.context.requires_context import NoDeps as NoDeps
 from returns.context.requires_context import Reader as Reader
 from returns.context.requires_context import RequiresContext as RequiresContext

@@ -1,27 +1,22 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.specific.ioresult import IOResultLikeN
 from returns.primitives.hkt import Kind3, Kinded, kinded
 from returns.result import Result
 
-_FirstType = TypeVar('_FirstType')
-_NewFirstType = TypeVar('_NewFirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_NewFirstType = TypeVar(u'_NewFirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
 
-_IOResultLikeKind = TypeVar('_IOResultLikeKind', bound=IOResultLikeN)
+_IOResultLikeKind = TypeVar(u'_IOResultLikeKind', bound=IOResultLikeN)
 
 
 def compose_result(
-    function: Callable[
-        [Result[_FirstType, _SecondType]],
-        Kind3[_IOResultLikeKind, _NewFirstType, _SecondType, _ThirdType],
-    ],
-) -> Kinded[Callable[
-    [Kind3[_IOResultLikeKind, _FirstType, _SecondType, _ThirdType]],
-    Kind3[_IOResultLikeKind, _NewFirstType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Composes inner ``Result`` with ``IOResultLike`` returning function.
 
     Can be useful when you need an access to both states of the result.
@@ -47,9 +42,7 @@ def compose_result(
     """
     @kinded
     def factory(
-        container: Kind3[
-            _IOResultLikeKind, _FirstType, _SecondType, _ThirdType,
-        ],
-    ) -> Kind3[_IOResultLikeKind, _NewFirstType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.compose_result(function)
     return factory

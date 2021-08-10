@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, ClassVar, Generic, NoReturn, Sequence, TypeVar
 
@@ -15,21 +16,20 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_AltableType = TypeVar('_AltableType', bound='AltableN')
+_AltableType = TypeVar(u'_AltableType', bound=u'AltableN')
 
 # Used in laws:
-_NewType1 = TypeVar('_NewType1')
-_NewType2 = TypeVar('_NewType2')
+_NewType1 = TypeVar(u'_NewType1')
+_NewType2 = TypeVar(u'_NewType2')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Mappable or functor laws.
 
     https://en.wikibooks.org/wiki/Haskell/The_Functor_class#The_functor_laws
@@ -37,29 +37,31 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def identity_law(
-        altable: 'AltableN[_FirstType, _SecondType, _ThirdType]',
-    ) -> None:
-        """Mapping identity over a value must return the value unchanged."""
+        altable,
+    ):
+        u"""Mapping identity over a value must return the value unchanged."""
         assert_equal(altable.alt(identity), altable)
 
     @law_definition
     def associative_law(
-        altable: 'AltableN[_FirstType, _SecondType, _ThirdType]',
-        first: Callable[[_SecondType], _NewType1],
-        second: Callable[[_NewType1], _NewType2],
-    ) -> None:
-        """Mapping twice or mapping a composition is the same thing."""
+        altable,
+        first,
+        second,
+    ):
+        u"""Mapping twice or mapping a composition is the same thing."""
         assert_equal(
             altable.alt(first).alt(second),
             altable.alt(compose(first, second)),
         )
 
 
+_LawSpec = final(_LawSpec)
+
 class AltableN(
     Generic[_FirstType, _SecondType, _ThirdType],
-    Lawful['AltableN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'AltableN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """Modifies the second type argument with a pure function."""
+    u"""Modifies the second type argument with a pure function."""
 
     _laws: ClassVar[Sequence[Law]] = (
         Law1(_LawSpec.identity_law),
@@ -68,10 +70,10 @@ class AltableN(
 
     @abstractmethod
     def alt(
-        self: _AltableType,
-        function: Callable[[_SecondType], _UpdatedType],
-    ) -> KindN[_AltableType, _FirstType, _UpdatedType, _ThirdType]:
-        """Allows to run a pure function over a container."""
+        self,
+        function,
+    ):
+        u"""Allows to run a pure function over a container."""
 
 
 #: Type alias for kinds with two type arguments.

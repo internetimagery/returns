@@ -1,16 +1,17 @@
+from __future__ import absolute_import
 from typing import TypeVar, Union
 
 from returns.interfaces.unwrappable import Unwrappable
 from returns.pipeline import is_successful
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
 
 def unwrap_or_failure(
-    container: Unwrappable[_FirstType, _SecondType],
-) -> Union[_FirstType, _SecondType]:
-    """
+    container,
+):
+    u"""
     Unwraps either successful or failed value.
 
     .. code:: python

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import TypeVar
 
 from returns.functions import identity
@@ -7,23 +8,18 @@ from returns.pipeline import is_successful
 from returns.primitives.hkt import KindN, kinded
 from returns.result import Failure, Result, Success
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
 
-_BindableKind = TypeVar('_BindableKind', bound=BindableN)
+_BindableKind = TypeVar(u'_BindableKind', bound=BindableN)
 
 
 @kinded
 def flatten(
-    container: KindN[
-        _BindableKind,
-        KindN[_BindableKind, _FirstType, _SecondType, _ThirdType],
-        _SecondType,
-        _ThirdType,
-    ],
-) -> KindN[_BindableKind, _FirstType, _SecondType, _ThirdType]:
-    """
+    container,
+):
+    u"""
     Joins two nested containers together.
 
     Please, note that it will not join
@@ -50,9 +46,9 @@ def flatten(
 
 
 def result_to_maybe(
-    result_container: Result[_FirstType, _SecondType],
-) -> Maybe[_FirstType]:
-    """
+    result_container,
+):
+    u"""
     Converts ``Result`` container to ``Maybe`` container.
 
     .. code:: python
@@ -72,9 +68,9 @@ def result_to_maybe(
 
 
 def maybe_to_result(
-    maybe_container: Maybe[_FirstType],
-) -> Result[_FirstType, None]:
-    """
+    maybe_container,
+):
+    u"""
     Converts ``Maybe`` container to ``Result`` container.
 
     .. code:: python

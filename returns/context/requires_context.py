@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeVar
@@ -24,16 +25,16 @@ if TYPE_CHECKING:
     from returns.context.requires_context_result import RequiresContextResult
 
 # Context:
-_EnvType = TypeVar('_EnvType', contravariant=True)
-_NewEnvType = TypeVar('_NewEnvType')
-_ReturnType = TypeVar('_ReturnType', covariant=True)
-_NewReturnType = TypeVar('_NewReturnType')
+_EnvType = TypeVar(u'_EnvType', contravariant=True)
+_NewEnvType = TypeVar(u'_NewEnvType')
+_ReturnType = TypeVar(u'_ReturnType', covariant=True)
+_NewReturnType = TypeVar(u'_NewReturnType')
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
 
 # Helpers:
-_FirstType = TypeVar('_FirstType')
+_FirstType = TypeVar(u'_FirstType')
 
 # Type Aliases:
 #: Sometimes ``RequiresContext`` and other similar types might be used with
@@ -41,13 +42,12 @@ _FirstType = TypeVar('_FirstType')
 NoDeps = Any
 
 
-@final
 class RequiresContext(
     BaseContainer,
-    SupportsKind2['RequiresContext', _ReturnType, _EnvType],
+    SupportsKind2[u'RequiresContext', _ReturnType, _EnvType],
     reader.ReaderBased2[_ReturnType, _EnvType],
 ):
-    """
+    u"""
     The ``RequiresContext`` container.
 
     It's main purpose is to wrap some specific function
@@ -85,9 +85,9 @@ class RequiresContext(
 
     def __init__(
         self,
-        inner_value: Callable[[_EnvType], _ReturnType],
-    ) -> None:
-        """
+        inner_value,
+    ):
+        u"""
         Public constructor for this type. Also required for typing.
 
         Only allows functions of kind ``* -> *``.
@@ -99,10 +99,10 @@ class RequiresContext(
           '<RequiresContext: <function <lambda> at ...>>'
 
         """
-        super().__init__(inner_value)
+        super(RequiresContext, self).__init__(inner_value)
 
-    def __call__(self, deps: _EnvType) -> _ReturnType:
-        """
+    def __call__(self, deps):
+        u"""
         Evaluates the wrapped function.
 
         .. code:: python
@@ -126,9 +126,9 @@ class RequiresContext(
         return self._inner_value(deps)
 
     def map(
-        self, function: Callable[[_ReturnType], _NewReturnType],
-    ) -> RequiresContext[_NewReturnType, _EnvType]:
-        """
+        self, function,
+    ):
+        u"""
         Allows to compose functions inside the wrapped container.
 
         Here's how it works:
@@ -150,13 +150,9 @@ class RequiresContext(
 
     def apply(
         self,
-        container: Kind2[
-            'RequiresContext',
-            Callable[[_ReturnType], _NewReturnType],
-            _EnvType,
-        ],
-    ) -> RequiresContext[_NewReturnType, _EnvType]:
-        """
+        container,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -173,12 +169,9 @@ class RequiresContext(
 
     def bind(
         self,
-        function: Callable[
-            [_ReturnType],
-            Kind2['RequiresContext', _NewReturnType, _EnvType],
-        ],
-    ) -> RequiresContext[_NewReturnType, _EnvType]:
-        """
+        function,
+    ):
+        u"""
         Composes a container with a function returning another container.
 
         This is useful when you do several computations that rely on the
@@ -211,9 +204,9 @@ class RequiresContext(
 
     def modify_env(
         self,
-        function: Callable[[_NewEnvType], _EnvType],
-    ) -> RequiresContext[_ReturnType, _NewEnvType]:
-        """
+        function,
+    ):
+        u"""
         Allows to modify the environment type.
 
         .. code:: python
@@ -229,8 +222,8 @@ class RequiresContext(
         return RequiresContext(lambda deps: self(function(deps)))
 
     @classmethod
-    def ask(cls) -> RequiresContext[_EnvType, _EnvType]:
-        """
+    def ask(cls):
+        u"""
         Get current context to use the dependencies.
 
         It is a common scenario when you need to use the environment.
@@ -312,9 +305,9 @@ class RequiresContext(
 
     @classmethod
     def from_value(
-        cls, inner_value: _FirstType,
-    ) -> RequiresContext[_FirstType, NoDeps]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Used to return some specific value from the container.
 
         Consider this method as some kind of factory.
@@ -334,9 +327,9 @@ class RequiresContext(
 
     @classmethod
     def from_context(
-        cls, inner_value: RequiresContext[_NewReturnType, _NewEnvType],
-    ) -> RequiresContext[_NewReturnType, _NewEnvType]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Used to create new containers from existing ones.
 
         Used as a part of ``ReaderBased2`` interface.
@@ -353,9 +346,9 @@ class RequiresContext(
     @classmethod
     def from_requires_context_result(
         cls,
-        inner_value: 'RequiresContextResult[_ValueType, _ErrorType, _EnvType]',
-    ) -> RequiresContext[Result[_ValueType, _ErrorType], _EnvType]:
-        """
+        inner_value,
+    ):
+        u"""
         Typecasts ``RequiresContextResult`` to ``RequiresContext`` instance.
 
         Breaks ``RequiresContextResult[a, b, e]``
@@ -378,10 +371,9 @@ class RequiresContext(
     @classmethod
     def from_requires_context_ioresult(
         cls,
-        inner_value:
-            'RequiresContextIOResult[_ValueType, _ErrorType, _EnvType]',
-    ) -> RequiresContext[IOResult[_ValueType, _ErrorType], _EnvType]:
-        """
+        inner_value,
+    ):
+        u"""
         Typecasts ``RequiresContextIOResult`` to ``RequiresContext`` instance.
 
         Breaks ``RequiresContextIOResult[a, b, e]``
@@ -404,10 +396,9 @@ class RequiresContext(
     @classmethod
     def from_requires_context_future_result(
         cls,
-        inner_value:
-            'RequiresContextFutureResult[_ValueType, _ErrorType, _EnvType]',
-    ) -> RequiresContext[FutureResult[_ValueType, _ErrorType], _EnvType]:
-        """
+        inner_value,
+    ):
+        u"""
         Typecasts ``RequiresContextIOResult`` to ``RequiresContext`` instance.
 
         Breaks ``RequiresContextIOResult[a, b, e]``
@@ -436,4 +427,6 @@ class RequiresContext(
 # Aliases
 
 #: Sometimes `RequiresContext` is too long to type.
+RequiresContext = final(RequiresContext)
+
 Reader = RequiresContext

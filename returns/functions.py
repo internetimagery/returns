@@ -1,14 +1,15 @@
+from __future__ import absolute_import
 from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar
 
 # Aliases:
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
 
 
-def identity(instance: _FirstType) -> _FirstType:
-    """
+def identity(instance):
+    u"""
     Function that returns its argument.
 
     .. code:: python
@@ -28,10 +29,10 @@ def identity(instance: _FirstType) -> _FirstType:
 
 
 def compose(
-    first: Callable[[_FirstType], _SecondType],
-    second: Callable[[_SecondType], _ThirdType],
-) -> Callable[[_FirstType], _ThirdType]:
-    """
+    first,
+    second,
+):
+    u"""
     Allows function composition.
 
     Works as: ``second . first`` or ``first() |> second()``.
@@ -48,9 +49,9 @@ def compose(
 
 
 def tap(
-    function: Callable[[_FirstType], Any],
-) -> Callable[[_FirstType], _FirstType]:
-    """
+    function,
+):
+    u"""
     Allows to apply some function and return an argument, instead of a result.
 
     Is useful for composing functions with
@@ -66,16 +67,16 @@ def tap(
         - https://github.com/dry-python/returns/issues/145
 
     """
-    def decorator(argument_to_return: _FirstType) -> _FirstType:
+    def decorator(argument_to_return):
         function(argument_to_return)
         return argument_to_return
     return decorator
 
 
 def untap(
-    function: Callable[[_FirstType], Any],
-) -> Callable[[_FirstType], None]:
-    """
+    function,
+):
+    u"""
     Allows to apply some function and always return ``None`` as a result.
 
     Is useful for composing functions that do some side effects
@@ -97,13 +98,13 @@ def untap(
         - https://github.com/dry-python/returns/issues/145
 
     """
-    def decorator(argument_to_return: _FirstType) -> None:
+    def decorator(argument_to_return):
         function(argument_to_return)
     return decorator
 
 
-def raise_exception(exception: Exception) -> NoReturn:
-    """
+def raise_exception(exception):
+    u"""
     Helper function to raise exceptions as a function.
 
     It might be required as a compatibility tool for existing APIs.
@@ -128,8 +129,8 @@ def raise_exception(exception: Exception) -> NoReturn:
     raise exception
 
 
-def not_(function: Callable[..., bool]) -> Callable[..., bool]:
-    """
+def not_(function):
+    u"""
     Denies the function returns.
 
     .. code:: python
@@ -144,6 +145,6 @@ def not_(function: Callable[..., bool]) -> Callable[..., bool]:
 
     """
     @wraps(function)  # noqa: WPS430
-    def wrapped_function(*args, **kwargs) -> bool:  # noqa: WPS430
+    def wrapped_function(*args, **kwargs):  # noqa: WPS430
         return not function(*args, **kwargs)
     return wrapped_function

@@ -1,0 +1,3 @@
+from mypy.types import Type as Type
+
+def translate_kind_instance(typ: Type) -> Type: ...

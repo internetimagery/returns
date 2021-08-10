@@ -1,0 +1,13 @@
+import abc
+from returns.primitives.hkt import KindN as KindN
+from typing import Any, Callable, Iterable, Tuple
+
+class AbstractFold(metaclass=abc.ABCMeta):
+    @classmethod
+    def loop(cls: Any, iterable: Iterable[KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType]], acc: KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType], function: Callable[[_FirstType], Callable[[_UpdatedType], _UpdatedType]]) -> KindN[_ApplicativeKind, _UpdatedType, _SecondType, _ThirdType]: ...
+    @classmethod
+    def collect(cls: Any, iterable: Iterable[KindN[_ApplicativeKind, _FirstType, _SecondType, _ThirdType]], acc: KindN[_ApplicativeKind, Tuple[_FirstType, ...], _SecondType, _ThirdType]) -> KindN[_ApplicativeKind, Tuple[_FirstType, ...], _SecondType, _ThirdType]: ...
+    @classmethod
+    def collect_all(cls: Any, iterable: Iterable[KindN[_FailableKind, _FirstType, _SecondType, _ThirdType]], acc: KindN[_FailableKind, Tuple[_FirstType, ...], _SecondType, _ThirdType]) -> KindN[_FailableKind, Tuple[_FirstType, ...], _SecondType, _ThirdType]: ...
+
+class Fold(AbstractFold): ...

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, List, Type, TypeVar
@@ -9,11 +10,11 @@ if TYPE_CHECKING:
 
 
 def strategy_from_container(
-    container_type: Type['Lawful'],
-    *,
-    use_init: bool = False,
-) -> Callable[[type], st.SearchStrategy]:
-    """
+    container_type, **_3to2kwargs
+):
+    if 'use_init' in _3to2kwargs: use_init = _3to2kwargs['use_init']; del _3to2kwargs['use_init']
+    else: use_init =  False
+    u"""
     Creates a strategy from a container type.
 
     Basically, containers should not support ``__init__``
@@ -34,11 +35,11 @@ def strategy_from_container(
     from returns.interfaces.applicative import ApplicativeN
     from returns.interfaces.specific import maybe, result
 
-    def factory(type_: type) -> st.SearchStrategy:
+    def factory(type_):
         value_type, error_type = _get_type_vars(type_)
 
         strategies: List[st.SearchStrategy[Any]] = []
-        if use_init and getattr(container_type, '__init__', None):
+        if use_init and getattr(container_type, u'__init__', None):
             strategies.append(st.builds(container_type))
         if issubclass(container_type, ApplicativeN):
             strategies.append(st.builds(
@@ -59,9 +60,9 @@ def strategy_from_container(
     return factory
 
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
 
-def _get_type_vars(thing: type):
-    return getattr(thing, '__args__', (_FirstType, _SecondType))[:2]
+def _get_type_vars(thing):
+    return getattr(thing, u'__args__', (_FirstType, _SecondType))[:2]

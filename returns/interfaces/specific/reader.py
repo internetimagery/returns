@@ -1,4 +1,4 @@
-"""
+u"""
 This module is special.
 
 ``Reader`` does not produce ``ReaderLikeN`` interface as other containers.
@@ -24,6 +24,7 @@ See also:
 
 """
 
+from __future__ import absolute_import
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -50,21 +51,21 @@ from returns.primitives.laws import (
 if TYPE_CHECKING:
     from returns.context import NoDeps, RequiresContext  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
-_EnvType = TypeVar('_EnvType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
+_EnvType = TypeVar(u'_EnvType')
 
-_ReaderLike2Type = TypeVar('_ReaderLike2Type', bound='ReaderLike2')
-_ReaderLike3Type = TypeVar('_ReaderLike3Type', bound='ReaderLike3')
+_ReaderLike2Type = TypeVar(u'_ReaderLike2Type', bound=u'ReaderLike2')
+_ReaderLike3Type = TypeVar(u'_ReaderLike3Type', bound=u'ReaderLike3')
 
 
 class Contextable(Generic[_ValueType, _EnvType]):
-    """
+    u"""
     Special type we use as a base one for all callble ``Reader`` instances.
 
     It only has a single method.
@@ -81,12 +82,12 @@ class Contextable(Generic[_ValueType, _EnvType]):
     """
 
     @abstractmethod
-    def __call__(self, deps: _EnvType) -> _ValueType:
-        """Receives one parameter, returns a value. As simple as that."""
+    def __call__(self, deps):
+        u"""Receives one parameter, returns a value. As simple as that."""
 
 
 class ReaderLike2(Container2[_FirstType, _SecondType]):
-    """
+    u"""
     Reader interface for ``Kind2`` based types.
 
     It has two type arguments and treats the second type argument as env type.
@@ -94,47 +95,44 @@ class ReaderLike2(Container2[_FirstType, _SecondType]):
 
     @property
     @abstractmethod
-    def no_args(self: _ReaderLike2Type) -> 'NoDeps':
-        """Is required to call ``Reader`` with no explicit arguments."""
+    def no_args(self):
+        u"""Is required to call ``Reader`` with no explicit arguments."""
 
     @abstractmethod
     def bind_context(
-        self: _ReaderLike2Type,
-        function: Callable[
-            [_FirstType],
-            'RequiresContext[_UpdatedType, _SecondType]',
-        ],
-    ) -> Kind2[_ReaderLike2Type, _UpdatedType, _SecondType]:
-        """Allows to apply a wrapped function over a ``Reader`` container."""
+        self,
+        function,
+    ):
+        u"""Allows to apply a wrapped function over a ``Reader`` container."""
 
     @abstractmethod
     def modify_env(
-        self: _ReaderLike2Type,
-        function: Callable[[_UpdatedType], _SecondType],
-    ) -> Kind2[_ReaderLike2Type, _FirstType, _UpdatedType]:
-        """Transforms the environment before calling the container."""
+        self,
+        function,
+    ):
+        u"""Transforms the environment before calling the container."""
 
     @classmethod
     @abstractmethod
     def ask(
-        cls: Type[_ReaderLike2Type],
-    ) -> Kind2[_ReaderLike2Type, _SecondType, _SecondType]:
-        """Returns the dependencies inside the container."""
+        cls,
+    ):
+        u"""Returns the dependencies inside the container."""
 
     @classmethod
     @abstractmethod
     def from_context(
-        cls: Type[_ReaderLike2Type],  # noqa: N805
-        inner_value: 'RequiresContext[_ValueType, _EnvType]',
-    ) -> Kind2[_ReaderLike2Type, _ValueType, _EnvType]:
-        """Unit method to create new containers from successful ``Reader``."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from successful ``Reader``."""
 
 
 class CallableReader2(
     ReaderLike2[_FirstType, _SecondType],
     Contextable[_ValueType, _EnvType],
 ):
-    """
+    u"""
     Intermediate interface for ``ReaderLike2`` + ``__call__`` method.
 
     Has 4 type variables to type ``Reader`` and ``__call__`` independently.
@@ -146,7 +144,7 @@ class CallableReader2(
 
 
 class ReaderLike3(Container3[_FirstType, _SecondType, _ThirdType]):
-    """
+    u"""
     Reader interface for ``Kind3`` based types.
 
     It has three type arguments and treats the third type argument as env type.
@@ -155,47 +153,44 @@ class ReaderLike3(Container3[_FirstType, _SecondType, _ThirdType]):
 
     @property
     @abstractmethod
-    def no_args(self: _ReaderLike3Type) -> 'NoDeps':
-        """Is required to call ``Reader`` with no explicit arguments."""
+    def no_args(self):
+        u"""Is required to call ``Reader`` with no explicit arguments."""
 
     @abstractmethod
     def bind_context(
-        self: _ReaderLike3Type,
-        function: Callable[
-            [_FirstType],
-            'RequiresContext[_UpdatedType, _ThirdType]',
-        ],
-    ) -> Kind3[_ReaderLike3Type, _UpdatedType, _SecondType, _ThirdType]:
-        """Allows to apply a wrapped function over a ``Reader`` container."""
+        self,
+        function,
+    ):
+        u"""Allows to apply a wrapped function over a ``Reader`` container."""
 
     @abstractmethod
     def modify_env(
-        self: _ReaderLike3Type,
-        function: Callable[[_UpdatedType], _ThirdType],
-    ) -> Kind3[_ReaderLike3Type, _FirstType, _SecondType, _UpdatedType]:
-        """Transforms the environment before calling the container."""
+        self,
+        function,
+    ):
+        u"""Transforms the environment before calling the container."""
 
     @classmethod
     @abstractmethod
     def ask(
-        cls: Type[_ReaderLike3Type],
-    ) -> Kind3[_ReaderLike3Type, _ThirdType, _SecondType, _ThirdType]:
-        """Returns the dependencies inside the container."""
+        cls,
+    ):
+        u"""Returns the dependencies inside the container."""
 
     @classmethod
     @abstractmethod
     def from_context(
-        cls: Type[_ReaderLike3Type],  # noqa: N805
-        inner_value: 'RequiresContext[_ValueType, _EnvType]',
-    ) -> Kind3[_ReaderLike3Type, _ValueType, _SecondType, _EnvType]:
-        """Unit method to create new containers from successful ``Reader``."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from successful ``Reader``."""
 
 
 class CallableReader3(
     ReaderLike3[_FirstType, _SecondType, _ThirdType],
     Contextable[_ValueType, _EnvType],
 ):
-    """
+    u"""
     Intermediate interface for ``ReaderLike3`` + ``__call__`` method.
 
     Has 5 type variables to type ``Reader`` and ``__call__`` independently.
@@ -207,7 +202,7 @@ class CallableReader3(
 
 
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Concrete laws for ``ReaderBased2``.
 
     See: https://github.com/haskell/mtl/pull/61/files
@@ -215,18 +210,18 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def purity_law(
-        container: ReaderBased2[_FirstType, _SecondType],
-        env: _SecondType,
-    ) -> None:
-        """Calling a ``Reader`` twice has the same result with the same env."""
+        container,
+        env,
+    ):
+        u"""Calling a ``Reader`` twice has the same result with the same env."""
         assert container(env) == container(env)
 
     @law_definition
     def asking_law(
-        container: ReaderBased2[_FirstType, _SecondType],
-        env: _SecondType,
-    ) -> None:
-        """Asking for an env, always returns the env."""
+        container,
+        env,
+    ):
+        u"""Asking for an env, always returns the env."""
         assert container.ask().__call__(    # noqa: WPS609
             env,
         ) == container.from_value(env).__call__(env)  # noqa: WPS609
@@ -240,9 +235,9 @@ class ReaderBased2(
         _FirstType,
         _SecondType,
     ],
-    Lawful['ReaderBased2[_FirstType, _SecondType]'],
+    Lawful[u'ReaderBased2[_FirstType, _SecondType]'],
 ):
-    """
+    u"""
     This interface is very specific to our ``Reader`` type.
 
     The only thing that differs from ``ReaderLike2`` is that we know

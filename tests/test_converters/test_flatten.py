@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 import pytest
 
 from returns.context import (
@@ -13,7 +15,7 @@ from returns.maybe import Nothing, Some
 from returns.result import Failure, Success
 
 
-@pytest.mark.parametrize(('container', 'merged'), [
+@pytest.mark.parametrize((u'container', u'merged'), [
     # Flattens:
     (IO(IO(1)), IO(1)),
 
@@ -25,17 +27,17 @@ from returns.result import Failure, Success
 
     # Nope:
     (Nothing, Nothing),
-    (Failure(Failure('a')), Failure(Failure('a'))),
-    (Failure(Success('a')), Failure(Success('a'))),
-    (IOFailure(IOFailure('a')), IOFailure(IOFailure('a'))),
-    (IOFailure(IOSuccess('a')), IOFailure(IOSuccess('a'))),
+    (Failure(Failure(u'a')), Failure(Failure(u'a'))),
+    (Failure(Success(u'a')), Failure(Success(u'a'))),
+    (IOFailure(IOFailure(u'a')), IOFailure(IOFailure(u'a'))),
+    (IOFailure(IOSuccess(u'a')), IOFailure(IOSuccess(u'a'))),
 ])
 def test_flatten(container, merged):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     assert flatten(container) == merged
 
 
-@pytest.mark.parametrize(('container', 'merged'), [
+@pytest.mark.parametrize((u'container', u'merged'), [
     (
         RequiresContextResult.from_value(
             RequiresContextResult.from_value(1),
@@ -58,13 +60,13 @@ def test_flatten(container, merged):
     ),
 ])
 def test_flatten_context(container, merged):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     assert flatten(container)(...) == merged(...)
 
 
 @pytest.mark.anyio()
 async def test_flatten_future(subtests):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     futures = [
         # Flattens:
         (Future.from_value(Future.from_value(1)), Future.from_value(1)),
@@ -81,7 +83,7 @@ async def test_flatten_future(subtests):
 
 @pytest.mark.anyio()
 async def test_flatten_context_future_result(subtests):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     futures = [
         # Flattens:
         (
@@ -101,7 +103,7 @@ async def test_flatten_context_future_result(subtests):
 
 @pytest.mark.anyio()
 async def test_non_flatten_future(subtests):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     futures = [
         # Not flattens:
         FutureResult.from_failure(FutureResult.from_failure(1)),
@@ -118,7 +120,7 @@ async def test_non_flatten_future(subtests):
 
 @pytest.mark.anyio()
 async def test_non_flatten_context_future_result(subtests):
-    """Ensures that `flatten` is always returning the correct type."""
+    u"""Ensures that `flatten` is always returning the correct type."""
     futures = [
         # Not flattens:
         RequiresContextFutureResult.from_failure(

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, TypeVar
@@ -8,21 +9,18 @@ from returns.primitives.hkt import Kinded, KindN, kinded
 if TYPE_CHECKING:
     from returns.io import IOResult  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_IOResultLikeKind = TypeVar('_IOResultLikeKind', bound=IOResultLikeN)
+_IOResultLikeKind = TypeVar(u'_IOResultLikeKind', bound=IOResultLikeN)
 
 
 def bind_ioresult(
-    function: Callable[[_FirstType], 'IOResult[_UpdatedType, _SecondType]'],
-) -> Kinded[Callable[
-    [KindN[_IOResultLikeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_IOResultLikeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Composes successful container with a function that returns a container.
 
     In other words, it modifies the function's
@@ -49,12 +47,7 @@ def bind_ioresult(
     """
     @kinded
     def factory(
-        container: KindN[
-            _IOResultLikeKind,
-            _FirstType,
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[_IOResultLikeKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_ioresult(function)
     return factory

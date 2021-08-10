@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, ClassVar, Generic, NoReturn, Sequence, TypeVar
 
@@ -15,21 +16,20 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_MappableType = TypeVar('_MappableType', bound='MappableN')
+_MappableType = TypeVar(u'_MappableType', bound=u'MappableN')
 
 # Used in laws:
-_NewType1 = TypeVar('_NewType1')
-_NewType2 = TypeVar('_NewType2')
+_NewType1 = TypeVar(u'_NewType1')
+_NewType2 = TypeVar(u'_NewType2')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Mappable or functor laws.
 
     https://en.wikibooks.org/wiki/Haskell/The_Functor_class#The_functor_laws
@@ -37,29 +37,31 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def identity_law(
-        mappable: 'MappableN[_FirstType, _SecondType, _ThirdType]',
-    ) -> None:
-        """Mapping identity over a value must return the value unchanged."""
+        mappable,
+    ):
+        u"""Mapping identity over a value must return the value unchanged."""
         assert_equal(mappable.map(identity), mappable)
 
     @law_definition
     def associative_law(
-        mappable: 'MappableN[_FirstType, _SecondType, _ThirdType]',
-        first: Callable[[_FirstType], _NewType1],
-        second: Callable[[_NewType1], _NewType2],
-    ) -> None:
-        """Mapping twice or mapping a composition is the same thing."""
+        mappable,
+        first,
+        second,
+    ):
+        u"""Mapping twice or mapping a composition is the same thing."""
         assert_equal(
             mappable.map(first).map(second),
             mappable.map(compose(first, second)),
         )
 
 
+_LawSpec = final(_LawSpec)
+
 class MappableN(
     Generic[_FirstType, _SecondType, _ThirdType],
-    Lawful['MappableN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'MappableN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Allows to chain wrapped values in containers with regular functions.
 
     Behaves like a functor.
@@ -76,10 +78,10 @@ class MappableN(
 
     @abstractmethod  # noqa: WPS125
     def map(
-        self: _MappableType,
-        function: Callable[[_FirstType], _UpdatedType],
-    ) -> KindN[_MappableType, _UpdatedType, _SecondType, _ThirdType]:
-        """Allows to run a pure function over a container."""
+        self,
+        function,
+    ):
+        u"""Allows to run a pure function over a container."""
 
 
 #: Type alias for kinds with one type argument.

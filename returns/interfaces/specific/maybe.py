@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import (
     Callable,
@@ -24,23 +25,22 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_MaybeLikeType = TypeVar('_MaybeLikeType', bound='MaybeLikeN')
+_MaybeLikeType = TypeVar(u'_MaybeLikeType', bound=u'MaybeLikeN')
 
 # New values:
-_ValueType = TypeVar('_ValueType')
+_ValueType = TypeVar(u'_ValueType')
 
 # Only used in laws:
-_NewType1 = TypeVar('_NewType1')
+_NewType1 = TypeVar(u'_NewType1')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Maybe laws.
 
     We need to be sure that
@@ -50,10 +50,10 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def map_short_circuit_law(
-        container: 'MaybeLikeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewType1],
-    ) -> None:
-        """Ensures that you cannot map from failures."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot map from failures."""
         assert_equal(
             container.from_optional(None).map(function),
             container.from_optional(None),
@@ -61,13 +61,10 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def bind_short_circuit_law(
-        container: 'MaybeLikeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_FirstType],
-            KindN['MaybeLikeN', _NewType1, _SecondType, _ThirdType],
-        ],
-    ) -> None:
-        """Ensures that you cannot bind from failures."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot bind from failures."""
         assert_equal(
             container.from_optional(None).bind(function),
             container.from_optional(None),
@@ -75,10 +72,10 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def bind_optional_short_circuit_law(
-        container: 'MaybeLikeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], Optional[_NewType1]],
-    ) -> None:
-        """Ensures that you cannot bind from failures."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot bind from failures."""
         assert_equal(
             container.from_optional(None).bind_optional(function),
             container.from_optional(None),
@@ -86,14 +83,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def lash_short_circuit_law(
-        raw_value: _FirstType,
-        container: 'MaybeLikeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_SecondType],
-            KindN['MaybeLikeN', _FirstType, _NewType1, _ThirdType],
-        ],
-    ) -> None:
-        """Ensures that you cannot lash a success."""
+        raw_value,
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot lash a success."""
         assert_equal(
             container.from_value(raw_value).lash(function),
             container.from_value(raw_value),
@@ -101,21 +95,23 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def unit_structure_law(
-        container: 'MaybeLikeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], None],
-    ) -> None:
-        """Ensures ``None`` is treated specially."""
+        container,
+        function,
+    ):
+        u"""Ensures ``None`` is treated specially."""
         assert_equal(
             container.bind_optional(function),
             container.from_optional(None),
         )
 
 
+_LawSpec = final(_LawSpec)
+
 class MaybeLikeN(
     failable.SingleFailableN[_FirstType, _SecondType, _ThirdType],
-    Lawful['MaybeLikeN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'MaybeLikeN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Type for values that do look like a ``Maybe``.
 
     For example, ``RequiresContextMaybe`` should be created from this interface.
@@ -132,18 +128,18 @@ class MaybeLikeN(
 
     @abstractmethod
     def bind_optional(
-        self: _MaybeLikeType,
-        function: Callable[[_FirstType], Optional[_UpdatedType]],
-    ) -> KindN[_MaybeLikeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Binds a function that returns ``Optional`` values."""
+        self,
+        function,
+    ):
+        u"""Binds a function that returns ``Optional`` values."""
 
     @classmethod
     @abstractmethod
     def from_optional(
-        cls: Type[_MaybeLikeType],  # noqa: N805
-        inner_value: Optional[_ValueType],
-    ) -> KindN[_MaybeLikeType, _ValueType, _SecondType, _ThirdType]:
-        """Unit method to create containers from ``Optional`` value."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create containers from ``Optional`` value."""
 
 
 #: Type alias for kinds with two type arguments.
@@ -158,7 +154,7 @@ class MaybeBasedN(
     unwrappable.Unwrappable[_FirstType, None],
     equable.Equable,
 ):
-    """
+    u"""
     Concrete interface for ``Maybe`` type.
 
     Can be unwrapped and compared.
@@ -167,9 +163,9 @@ class MaybeBasedN(
     @abstractmethod
     def or_else_call(
         self,
-        function: Callable[[], _ValueType],
-    ) -> Union[_FirstType, _ValueType]:
-        """Calls a function in case there nothing to unwrap."""
+        function,
+    ):
+        u"""Calls a function in case there nothing to unwrap."""
 
 
 #: Type alias for kinds with two type arguments.

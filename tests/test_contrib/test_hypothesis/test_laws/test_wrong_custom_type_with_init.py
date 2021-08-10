@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 import pytest
@@ -9,26 +10,26 @@ from returns.primitives.hkt import SupportsKind1
 
 pytestmark = pytest.mark.xfail
 
-_ValueType = TypeVar('_ValueType')
-_NewValueType = TypeVar('_NewValueType')
+_ValueType = TypeVar(u'_ValueType')
+_NewValueType = TypeVar(u'_NewValueType')
 
 
 class _Wrapper(
     BaseContainer,
-    SupportsKind1['_Wrapper', _ValueType],
+    SupportsKind1[u'_Wrapper', _ValueType],
     mappable.Mappable1[_ValueType],
 ):
     _inner_value: _ValueType
 
-    def __init__(self, inner_value: _ValueType) -> None:
-        super().__init__(inner_value)
+    def __init__(self, inner_value):
+        super(_Wrapper, self).__init__(inner_value)
 
     def map(
         self,
-        function: Callable[[_ValueType], _NewValueType],
-    ) -> '_Wrapper[_NewValueType]':
+        function,
+    ):
         return _Wrapper(
-            'wrong-{0}'.format(function(self._inner_value)),  # type: ignore
+            u'wrong-{0}'.format(function(self._inner_value)),  # type: ignore
         )
 
 

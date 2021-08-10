@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from returns.pointfree.alt import alt as alt
 from returns.pointfree.apply import apply as apply
 from returns.pointfree.bimap import bimap as bimap

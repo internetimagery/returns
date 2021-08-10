@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Iterator, List, Optional, Tuple
 
 from mypy.checker import detach_callable
@@ -19,6 +20,8 @@ from returns.contrib.mypy._typeops.transform_callable import (
     Intermediate,
     proper_type,
 )
+from itertools import ifilter
+from itertools import izip
 
 _SUPPORTED_TYPES: Final = (
     CallableType,
@@ -28,8 +31,8 @@ _SUPPORTED_TYPES: Final = (
 )
 
 
-def analyze(ctx: FunctionContext) -> MypyType:
-    """
+def analyze(ctx):
+    u"""
     This hook is used to make typed curring a thing in `returns` project.
 
     This plugin is a temporary solution to the problem.
@@ -47,7 +50,7 @@ def analyze(ctx: FunctionContext) -> MypyType:
     function_def = ctx.arg_types[0][0]
     func_args = _AppliedArgs(ctx)
 
-    if len(list(filter(len, ctx.arg_types))) == 1:
+    if len(list(ifilter(len, ctx.arg_types))) == 1:
         return function_def  # this means, that `partial(func)` is called
     elif not isinstance(function_def, _SUPPORTED_TYPES):
         return ctx.default_return_type
@@ -67,9 +70,8 @@ def analyze(ctx: FunctionContext) -> MypyType:
     ).new_partial()
 
 
-@final
 class _PartialFunctionReducer(object):
-    """
+    u"""
     Helper object to work with curring.
 
     Here's a quick overview of things that is going on inside:
@@ -96,12 +98,12 @@ class _PartialFunctionReducer(object):
 
     def __init__(
         self,
-        default_return_type: FunctionLike,
-        original: FunctionLike,
-        applied_args: List[FuncArg],
-        ctx: FunctionContext,
-    ) -> None:
-        """
+        default_return_type,
+        original,
+        applied_args,
+        ctx,
+    ):
+        u"""
         Saving the things we need.
 
         Args:
@@ -119,8 +121,8 @@ class _PartialFunctionReducer(object):
         self._case_functions: List[CallableType] = []
         self._fallbacks: List[CallableType] = []
 
-    def new_partial(self) -> MypyType:
-        """
+    def new_partial(self):
+        u"""
         Creates new partial functions.
 
         Splits passed functions into ``case_function``
@@ -142,8 +144,8 @@ class _PartialFunctionReducer(object):
 
     def _create_intermediate(
         self,
-        case_function: CallableType,
-    ) -> Tuple[CallableType, Optional[CallableType]]:
+        case_function,
+    ):
         intermediate = Intermediate(case_function).with_applied_args(
             self._applied_args,
         )
@@ -156,10 +158,10 @@ class _PartialFunctionReducer(object):
 
     def _create_partial_case(
         self,
-        case_function: CallableType,
-        intermediate: CallableType,
-        fallback: CallableType,
-    ) -> CallableType:
+        case_function,
+        intermediate,
+        fallback,
+    ):
         partial = CallableInference(
             Functions(case_function, intermediate).diff(),
             self._ctx,
@@ -183,8 +185,8 @@ class _PartialFunctionReducer(object):
             return detach_callable(partial)
         return partial.copy_modified(variables=[])
 
-    def _create_new_partial(self) -> MypyType:
-        """
+    def _create_new_partial(self):
+        u"""
         Creates a new partial function-like from set of callables.
 
         We also need fallbacks here, because sometimes
@@ -203,33 +205,34 @@ class _PartialFunctionReducer(object):
         return proper_type(self._case_functions)
 
 
-@final
-class _AppliedArgs(object):
-    """Builds applied args that were partially applied."""
+_PartialFunctionReducer = final(_PartialFunctionReducer)
 
-    def __init__(self, function_ctx: FunctionContext) -> None:
-        """
+class _AppliedArgs(object):
+    u"""Builds applied args that were partially applied."""
+
+    def __init__(self, function_ctx):
+        u"""
         We need the function default context.
 
         The first arguments of ``partial`` is skipped:
         it is the applied function itself.
         """
         self._function_ctx = function_ctx
-        self._parts = zip(
+        self._parts = izip(
             self._function_ctx.arg_names[1:],
             self._function_ctx.arg_types[1:],
             self._function_ctx.arg_kinds[1:],
         )
 
-    def get_callable_from_context(self) -> MypyType:
-        """Returns callable type from the context."""
+    def get_callable_from_context(self):
+        u"""Returns callable type from the context."""
         return safe_translate_to_function(
             self._function_ctx.arg_types[0][0],
             self._function_ctx,
         )
 
-    def build_from_context(self) -> Tuple[bool, List[FuncArg]]:
-        """
+    def build_from_context(self):
+        u"""
         Builds handy arguments structures from the context.
 
         Some usages might be invalid,
@@ -245,16 +248,18 @@ class _AppliedArgs(object):
         """
         applied_args = []
         for names, types, kinds in self._parts:
-            for arg in self._generate_applied_args(zip(names, types, kinds)):
-                if arg.kind in {ARG_STAR, ARG_STAR2}:
+            for arg in self._generate_applied_args(izip(names, types, kinds)):
+                if arg.kind in set([ARG_STAR, ARG_STAR2]):
                     # We cannot really work with `*args`, `**kwargs`.
                     return False, []
 
                 applied_args.append(arg)
         return True, applied_args
 
-    def _generate_applied_args(self, arg_parts) -> Iterator[FuncArg]:
+    def _generate_applied_args(self, arg_parts):
         yield from (
             FuncArg(name, typ, kind)
             for name, typ, kind in arg_parts
         )
+
+_AppliedArgs = final(_AppliedArgs)

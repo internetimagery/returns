@@ -1,0 +1,3 @@
+from returns.io import IO as IO
+
+def unsafe_perform_io(wrapped_in_io: IO[_ValueType]) -> _ValueType: ...

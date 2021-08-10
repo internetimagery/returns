@@ -1,0 +1,13 @@
+from mypy.plugin import FunctionContext as FunctionContext
+from mypy.types import CallableType as CallableType, Type as MypyType
+from returns.contrib.mypy._structures.args import FuncArg as FuncArg
+from returns.contrib.mypy._structures.types import CallableContext as CallableContext
+from typing import List, Optional, Tuple
+
+class CallableInference:
+    def __init__(self, case_function: CallableType, ctx: FunctionContext, *, fallback: Optional[CallableType]=...) -> None: ...
+    def from_usage(self, applied_args: List[FuncArg]) -> CallableType: ...
+
+class PipelineInference:
+    def __init__(self, instance: MypyType) -> None: ...
+    def from_callable_sequence(self, pipeline_types: Tuple[MypyType, ...], pipeline_kinds: List[int], ctx: CallableContext) -> MypyType: ...

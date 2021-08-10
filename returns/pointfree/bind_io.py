@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, TypeVar
@@ -8,21 +9,18 @@ from returns.primitives.hkt import Kinded, KindN, kinded
 if TYPE_CHECKING:
     from returns.io import IO  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType', contravariant=True)
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType', contravariant=True)
-_UpdatedType = TypeVar('_UpdatedType', covariant=True)
+_FirstType = TypeVar(u'_FirstType', contravariant=True)
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType', contravariant=True)
+_UpdatedType = TypeVar(u'_UpdatedType', covariant=True)
 
-_IOLikeKind = TypeVar('_IOLikeKind', bound=IOLikeN)
+_IOLikeKind = TypeVar(u'_IOLikeKind', bound=IOLikeN)
 
 
 def bind_io(
-    function: Callable[[_FirstType], 'IO[_UpdatedType]'],
-) -> Kinded[Callable[
-    [KindN[_IOLikeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_IOLikeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Composes successful container with a function that returns a container.
 
     In other words, it modifies the function's
@@ -48,7 +46,7 @@ def bind_io(
     """
     @kinded
     def factory(
-        container: KindN[_IOLikeKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_IOLikeKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_io(function)
     return factory

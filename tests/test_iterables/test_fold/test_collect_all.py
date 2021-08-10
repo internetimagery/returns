@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 import sys
 from typing import Iterable, List, Sequence, Tuple
 
@@ -16,7 +18,7 @@ from returns.maybe import Nothing, Some
 from returns.result import Failure, Success
 
 
-@pytest.mark.parametrize(('iterable', 'sequence'), [
+@pytest.mark.parametrize((u'iterable', u'sequence'), [
     ([], Some(())),
     ([Some(1)], Some((1,))),
     ([Some(1), Some(2)], Some((1, 2))),
@@ -29,28 +31,28 @@ from returns.result import Failure, Success
     ([Success(1)], Success((1,))),
     ([Success(1), Success(2)], Success((1, 2))),
     (
-        [Failure('a'), Success(1), Success(2)],
+        [Failure(u'a'), Success(1), Success(2)],
         Success((1, 2)),
     ),
-    ([Success(1), Failure('b')], Success((1,))),
-    ([Failure('a'), Failure('b')], Success(())),
+    ([Success(1), Failure(u'b')], Success((1,))),
+    ([Failure(u'a'), Failure(u'b')], Success(())),
 
     ([], IOSuccess(())),
     ([IOSuccess(1)], IOSuccess((1,))),
     ([IOSuccess(1), IOSuccess(2)], IOSuccess((1, 2))),
     (
-        [IOFailure('a'), IOSuccess(1), IOSuccess(2)],
+        [IOFailure(u'a'), IOSuccess(1), IOSuccess(2)],
         IOSuccess((1, 2)),
     ),
-    ([IOSuccess(1), IOFailure('b')], IOSuccess((1,))),
-    ([IOFailure('a'), IOFailure('b')], IOSuccess(())),
+    ([IOSuccess(1), IOFailure(u'b')], IOSuccess((1,))),
+    ([IOFailure(u'a'), IOFailure(u'b')], IOSuccess(())),
 ])
 def test_collect_all_result(iterable, sequence):
-    """Iterable for ``Result`` and ``Fold``."""
+    u"""Iterable for ``Result`` and ``Fold``."""
     assert Fold.collect_all(iterable, sequence.from_value(())) == sequence
 
 
-@pytest.mark.parametrize(('iterable', 'sequence'), [
+@pytest.mark.parametrize((u'iterable', u'sequence'), [
     ([], ReaderResult.from_value(())),
     ([ReaderResult.from_value(1)], ReaderResult.from_value((1,))),
     (
@@ -59,14 +61,14 @@ def test_collect_all_result(iterable, sequence):
     ),
     (
         [
-            ReaderResult.from_failure('a'),
+            ReaderResult.from_failure(u'a'),
             ReaderResult.from_value(1),
             ReaderResult.from_value(2),
         ],
         ReaderResult.from_value((1, 2)),
     ),
     (
-        [ReaderResult.from_failure('a'), ReaderResult.from_failure('b')],
+        [ReaderResult.from_failure(u'a'), ReaderResult.from_failure(u'b')],
         ReaderResult.from_value(()),
     ),
 
@@ -78,19 +80,19 @@ def test_collect_all_result(iterable, sequence):
     ),
     (
         [
-            ReaderIOResult.from_failure('a'),
+            ReaderIOResult.from_failure(u'a'),
             ReaderIOResult.from_value(1),
             ReaderIOResult.from_value(2),
         ],
         ReaderIOResult.from_value((1, 2)),
     ),
     (
-        [ReaderIOResult.from_failure('a'), ReaderIOResult.from_failure('b')],
+        [ReaderIOResult.from_failure(u'a'), ReaderIOResult.from_failure(u'b')],
         ReaderIOResult.from_value(()),
     ),
 ])
 def test_collect_all_reader_result(iterable, sequence):
-    """Iterable for ``ReaderResult`` and ``Fold``."""
+    u"""Iterable for ``ReaderResult`` and ``Fold``."""
     assert Fold.collect_all(
         iterable, sequence.from_value(()),
     )(...) == sequence(...)
@@ -98,10 +100,10 @@ def test_collect_all_reader_result(iterable, sequence):
 
 @pytest.mark.anyio()
 async def test_collect_all_reader_future_result(subtests):
-    """Iterable for ``ReaderFutureResult`` and ``Fold``."""
+    u"""Iterable for ``ReaderFutureResult`` and ``Fold``."""
     containers: List[Tuple[  # noqa: WPS234
-        Iterable[ReaderFutureResult[int, str, NoDeps]],
-        ReaderFutureResult[Sequence[int], str, NoDeps],
+        Iterable[ReaderFutureResult[int, unicode, NoDeps]],
+        ReaderFutureResult[Sequence[int], unicode, NoDeps],
     ]] = [
         ([], ReaderFutureResult.from_value(())),
         (
@@ -117,7 +119,7 @@ async def test_collect_all_reader_future_result(subtests):
         ),
         (
             [
-                ReaderFutureResult.from_failure('a'),
+                ReaderFutureResult.from_failure(u'a'),
                 ReaderFutureResult.from_value(1),
                 ReaderFutureResult.from_value(2),
             ],
@@ -125,8 +127,8 @@ async def test_collect_all_reader_future_result(subtests):
         ),
         (
             [
-                ReaderFutureResult.from_failure('a'),
-                ReaderFutureResult.from_failure('b'),
+                ReaderFutureResult.from_failure(u'a'),
+                ReaderFutureResult.from_failure(u'b'),
             ],
             ReaderFutureResult.from_value(()),
         ),
@@ -140,19 +142,19 @@ async def test_collect_all_reader_future_result(subtests):
 
 @pytest.mark.anyio()
 async def test_collect_all_future_result(subtests):
-    """Iterable for ``FutureResult`` and ``Fold``."""
+    u"""Iterable for ``FutureResult`` and ``Fold``."""
     containers: List[Tuple[  # noqa: WPS234
-        Iterable[FutureResult[int, str]],
-        FutureResult[Sequence[int], str],
+        Iterable[FutureResult[int, unicode]],
+        FutureResult[Sequence[int], unicode],
     ]] = [
         ([], FutureSuccess(())),
         ([FutureSuccess(1)], FutureSuccess((1,))),
         ([FutureSuccess(1), FutureSuccess(2)], FutureSuccess((1, 2))),
         (
-            [FutureFailure('a'), FutureSuccess(1), FutureSuccess(2)],
+            [FutureFailure(u'a'), FutureSuccess(1), FutureSuccess(2)],
             FutureSuccess((1, 2)),
         ),
-        ([FutureFailure('a'), FutureFailure('b')], FutureSuccess(())),
+        ([FutureFailure(u'a'), FutureFailure(u'b')], FutureSuccess(())),
     ]
     for iterable, sequence in containers:
         with subtests.test(iterable=iterable, sequence=sequence):
@@ -162,8 +164,8 @@ async def test_collect_all_future_result(subtests):
 
 
 def test_fold_collect_recursion_limit():
-    """Ensures that ``.collect_all`` method is recurion safe."""
+    u"""Ensures that ``.collect_all`` method is recurion safe."""
     limit = sys.getrecursionlimit() + 1
-    iterable = (Success(1) for _ in range(limit))
+    iterable = (Success(1) for _ in xrange(limit))
     expected = Success((1,) * limit)
     assert Fold.collect_all(iterable, Success(())) == expected

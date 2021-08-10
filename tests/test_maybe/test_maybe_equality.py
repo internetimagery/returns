@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 from copy import copy, deepcopy
 
 import pytest
@@ -7,7 +9,7 @@ from returns.primitives.exceptions import ImmutableStateError
 
 
 def test_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     inner_value = 1
 
     assert Some(inner_value).equals(Some(inner_value))
@@ -15,14 +17,14 @@ def test_equals():
 
 
 def test_not_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     assert not Some(1).equals(Nothing)
     assert not Some(1).equals(Some(0))
     assert not Nothing.equals(Some(1))
 
 
 def test_equality():
-    """Ensures that containers can be compared."""
+    u"""Ensures that containers can be compared."""
     assert Nothing is Nothing  # noqa: WPS312
     assert Nothing == _Nothing() == _Nothing(None)
     assert Some(5) == Some(5)
@@ -31,7 +33,7 @@ def test_equality():
 
 
 def test_nonequality():
-    """Ensures that containers are not compared to regular values."""
+    u"""Ensures that containers are not compared to regular values."""
     assert Nothing is not None
     assert Nothing != None  # noqa: E711
     assert _Nothing(None) != None  # noqa: E711
@@ -40,7 +42,7 @@ def test_nonequality():
 
 
 def test_is_compare():
-    """Ensures that `is` operator works correctly."""
+    u"""Ensures that `is` operator works correctly."""
     some_container = Some(1)
 
     assert Nothing.bind(lambda state: state) is Nothing
@@ -48,7 +50,7 @@ def test_is_compare():
 
 
 def test_immutability_failure():
-    """Ensures that Failure container is immutable."""
+    u"""Ensures that Failure container is immutable."""
     with pytest.raises(ImmutableStateError):
         Nothing._inner_state = 1  # noqa: WPS437
 
@@ -63,7 +65,7 @@ def test_immutability_failure():
 
 
 def test_immutability_success():
-    """Ensures that Success container is immutable."""
+    u"""Ensures that Success container is immutable."""
     with pytest.raises(ImmutableStateError):
         Some(0)._inner_state = 1  # noqa: WPS437
 
@@ -78,24 +80,24 @@ def test_immutability_success():
 
 
 def test_success_immutable_copy():
-    """Ensures that Success returns it self when passed to copy function."""
+    u"""Ensures that Success returns it self when passed to copy function."""
     some = Some(1)  # noqa: WPS110
     assert some is copy(some)
 
 
 def test_success_immutable_deepcopy():
-    """Ensures that Success returns it self when passed to deepcopy function."""
+    u"""Ensures that Success returns it self when passed to deepcopy function."""
     some = Some(1)  # noqa: WPS110
     assert some is deepcopy(some)
 
 
 def test_failure_immutable_copy():
-    """Ensures that Failure returns it self when passed to copy function."""
+    u"""Ensures that Failure returns it self when passed to copy function."""
     nothing = _Nothing()
     assert nothing is copy(nothing)
 
 
 def test_failure_immutable_deepcopy():
-    """Ensures that Failure returns it self when passed to deepcopy function."""
+    u"""Ensures that Failure returns it self when passed to deepcopy function."""
     nothing = _Nothing()
     assert nothing is deepcopy(nothing)

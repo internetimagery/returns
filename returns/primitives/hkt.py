@@ -1,32 +1,33 @@
+from __future__ import absolute_import
 from typing import TYPE_CHECKING, Any, Callable, Generic, NoReturn, TypeVar
 
 from typing_extensions import Protocol
 
-_InstanceType = TypeVar('_InstanceType', covariant=True)
-_TypeArgType1 = TypeVar('_TypeArgType1', covariant=True)
-_TypeArgType2 = TypeVar('_TypeArgType2', covariant=True)
-_TypeArgType3 = TypeVar('_TypeArgType3', covariant=True)
+_InstanceType = TypeVar(u'_InstanceType', covariant=True)
+_TypeArgType1 = TypeVar(u'_TypeArgType1', covariant=True)
+_TypeArgType2 = TypeVar(u'_TypeArgType2', covariant=True)
+_TypeArgType3 = TypeVar(u'_TypeArgType3', covariant=True)
 
 _FunctionDefType = TypeVar(
-    '_FunctionDefType',
+    u'_FunctionDefType',
     bound=Callable,
     covariant=True,  # This is a must! Otherwise it would not work.
 )
 _FunctionType = TypeVar(
-    '_FunctionType',
+    u'_FunctionType',
     bound=Callable,
 )
 
-_UpdatedType = TypeVar('_UpdatedType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_FirstKind = TypeVar('_FirstKind')
-_SecondKind = TypeVar('_SecondKind')
+_FirstKind = TypeVar(u'_FirstKind')
+_SecondKind = TypeVar(u'_SecondKind')
 
 
 class KindN(
     Generic[_InstanceType, _TypeArgType1, _TypeArgType2, _TypeArgType3],
 ):
-    """
+    u"""
     Emulation support for Higher Kinded Types.
 
     Consider ``KindN`` to be an alias of ``Generic`` type.
@@ -90,8 +91,8 @@ class KindN(
     __slots__ = ()
 
     if TYPE_CHECKING:  # noqa: WPS604 # pragma: no cover
-        def __getattr__(self, attrname: str):
-            """
+        def __getattr__(self, attrname):
+            u"""
             This function is required for ``get_attribute_hook`` in mypy plugin.
 
             It is never called in real-life, because ``KindN`` is abstract.
@@ -112,7 +113,7 @@ Kind3 = KindN[_InstanceType, _TypeArgType1, _TypeArgType2, _TypeArgType3]
 class SupportsKindN(
     KindN[_InstanceType, _TypeArgType1, _TypeArgType2, _TypeArgType3],
 ):
-    """
+    u"""
     Base class for your containers.
 
     Notice, that we use ``KindN`` / ``Kind1`` to annotate values,
@@ -146,9 +147,9 @@ SupportsKind3 = SupportsKindN[
 
 
 def dekind(
-    kind: KindN[_InstanceType, _TypeArgType1, _TypeArgType2, _TypeArgType3],
-) -> _InstanceType:
-    """
+    kind,
+):
+    u"""
     Turns ``Kind1[IO, int]`` type into real ``IO[int]`` type.
 
     Should be used when you are left with accidental ``KindN`` instance
@@ -187,7 +188,7 @@ def dekind(
 # This will allow to have better support for callable protocols and similar.
 # Blocked by: https://github.com/python/mypy/issues/9001
 class Kinded(Protocol[_FunctionDefType]):  # type: ignore
-    """
+    u"""
     Protocol that tracks kinded functions calls.
 
     We use a custom ``mypy`` plugin to make sure types are correct.
@@ -199,14 +200,14 @@ class Kinded(Protocol[_FunctionDefType]):  # type: ignore
 
     def __get__(
         self,
-        instance: _UpdatedType,
+        instance,
         type_,
-    ) -> Callable[..., _UpdatedType]:
-        """Used to decorate and properly analyze method calls."""
+    ):
+        u"""Used to decorate and properly analyze method calls."""
 
 
-def kinded(function: _FunctionType) -> Kinded[_FunctionType]:
-    """
+def kinded(function):
+    u"""
     Decorator to be used when you want to dekind the function's return type.
 
     Does nothing in runtime, just returns its argument.

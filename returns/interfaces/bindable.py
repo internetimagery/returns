@@ -1,18 +1,19 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, Generic, NoReturn, TypeVar
 
 from returns.primitives.hkt import KindN
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_BindableType = TypeVar('_BindableType', bound='BindableN')
+_BindableType = TypeVar(u'_BindableType', bound=u'BindableN')
 
 
 class BindableN(Generic[_FirstType, _SecondType, _ThirdType]):
-    """
+    u"""
     Represents a "context" in which calculations can be executed.
 
     ``Bindable`` allows you to bind together
@@ -25,13 +26,10 @@ class BindableN(Generic[_FirstType, _SecondType, _ThirdType]):
 
     @abstractmethod
     def bind(
-        self: _BindableType,
-        function: Callable[
-            [_FirstType],
-            KindN[_BindableType, _UpdatedType, _SecondType, _ThirdType],
-        ],
-    ) -> KindN[_BindableType, _UpdatedType, _SecondType, _ThirdType]:
-        """
+        self,
+        function,
+    ):
+        u"""
         Applies 'function' to the result of a previous calculation.
 
         And returns a new container.

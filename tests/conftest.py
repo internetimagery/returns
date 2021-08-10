@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import sys
 from pathlib import Path
 from types import MappingProxyType
@@ -8,14 +9,14 @@ from py import path as pypath
 from typing_extensions import Final
 
 # See https://github.com/HypothesisWorks/hypothesis/pull/2567
-pytest_plugins = ['hypothesis.extra.pytestplugin']
+pytest_plugins = [u'hypothesis.extra.pytestplugin']
 
 PYTHON_VERSION: Final = (sys.version_info.major, sys.version_info.minor)
 ENABLE_SINCE: Final = MappingProxyType({
     (3, 10): frozenset((
-        Path('tests/test_examples/test_result/test_result_pattern_matching.py'),
-        Path('tests/test_examples/test_maybe/test_maybe_pattern_matching.py'),
-        Path('tests/test_examples/test_io/test_ioresult_container/test_ioresult_pattern_matching.py'),  # noqa: E501
+        Path(u'tests/test_examples/test_result/test_result_pattern_matching.py'),
+        Path(u'tests/test_examples/test_maybe/test_maybe_pattern_matching.py'),
+        Path(u'tests/test_examples/test_io/test_ioresult_container/test_ioresult_pattern_matching.py'),  # noqa: E501
     )),
 })
 PATHS_TO_IGNORE_NOW: Final = frozenset(
@@ -27,10 +28,10 @@ PATHS_TO_IGNORE_NOW: Final = frozenset(
 
 
 def pytest_ignore_collect(
-    path: pypath.local,
-    config: Config,
-) -> Optional[bool]:
-    """
+    path,
+    config,
+):
+    u"""
     Return True to prevent considering this path for collection.
 
     This hook is consulted for all files and directories prior to calling

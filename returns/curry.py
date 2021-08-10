@@ -1,17 +1,18 @@
+from __future__ import absolute_import
 from functools import partial as _partial
 from functools import wraps
 from inspect import BoundArguments, Signature
 from typing import Any, Callable, Tuple, TypeVar, Union
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ReturnType = TypeVar('_ReturnType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ReturnType = TypeVar(u'_ReturnType')
 
 
 def partial(
-    func: Callable[..., _ReturnType], *args: Any, **kwargs: Any,
-) -> Callable[..., _ReturnType]:
-    """
+    func, *args, **kwargs,
+):
+    u"""
     Typed partial application.
 
     It is just a ``functools.partial`` wrapper with better typing support.
@@ -37,8 +38,8 @@ def partial(
     return _partial(func, *args, **kwargs)
 
 
-def curry(function: Callable[..., _ReturnType]) -> Callable[..., _ReturnType]:
-    """
+def curry(function):
+    u"""
     Typed currying decorator.
 
     Currying is a conception from functional languages that does partial
@@ -123,12 +124,12 @@ def curry(function: Callable[..., _ReturnType]) -> Callable[..., _ReturnType]:
 
 
 def _eager_curry(
-    function: Callable[..., _ReturnType],
+    function,
     argspec,
-    args: tuple,
-    kwargs: dict,
-) -> Union[_ReturnType, Callable[..., _ReturnType]]:
-    """
+    args,
+    kwargs,
+):
+    u"""
     Internal ``curry`` implementation.
 
     The interesting part about it is that it return the result
@@ -154,11 +155,11 @@ _ArgSpec = Union[
 
 
 def _intermediate_argspec(
-    argspec: BoundArguments,
-    args: tuple,
-    kwargs: dict,
-) -> _ArgSpec:
-    """
+    argspec,
+    args,
+    kwargs,
+):
+    u"""
     That's where ``curry`` magic happens.
 
     We use ``Signature`` objects from ``inspect`` to bind existing arguments.
@@ -171,7 +172,7 @@ def _intermediate_argspec(
     This function is slow. Any optimization ideas are welcome!
     """
     full_args = argspec.args + args
-    full_kwargs = {**argspec.kwargs, **kwargs}
+    full_kwargs = set([**argspec.kwargs, **kwargs])
 
     try:
         argspec.signature.bind(*full_args, **full_kwargs)

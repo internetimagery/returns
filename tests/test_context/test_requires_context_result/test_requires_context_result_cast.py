@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import absolute_import
 from returns.context import (
     ReaderResult,
     ReaderResultE,
@@ -6,22 +8,22 @@ from returns.context import (
 )
 
 
-def _function(arg: int) -> RequiresContextResultE[float, int]:
+def _function(arg):
     if arg == 0:
         return RequiresContextResult.from_failure(
-            ZeroDivisionError('Divided by 0'),
+            ZeroDivisionError(u'Divided by 0'),
         )
     return RequiresContextResult.from_value(10 / arg)
 
 
 def test_requires_context_resulte():
-    """Ensures that RequiresContextResultE correctly typecast."""
+    u"""Ensures that RequiresContextResultE correctly typecast."""
     container: RequiresContextResult[float, Exception, int] = _function(1)
     assert container(0) == RequiresContextResult.from_value(10.0)(0)
 
 
 def test_requires_context_aliases():
-    """Ensures that ReaderResult correctly typecast."""
+    u"""Ensures that ReaderResult correctly typecast."""
     container: ReaderResultE[float, int] = _function(1)
     container2: ReaderResult[float, Exception, int] = _function(1)
     container3: ReaderResultE[float, int] = ReaderResultE.from_value(

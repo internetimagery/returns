@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 import inspect
 from contextlib import contextmanager
 from typing import (
@@ -22,21 +24,21 @@ from returns.contrib.hypothesis.containers import strategy_from_container
 from returns.primitives.laws import Law, Lawful
 
 
-@final
 class _Settings(NamedTuple):
-    """Settings that we provide to an end user."""
+    u"""Settings that we provide to an end user."""
 
-    settings_kwargs: Dict[str, Any]
+    settings_kwargs: Dict[unicode, Any]
     use_init: bool
-
+_Settings = final(_Settings)
 
 def check_all_laws(
-    container_type: Type[Lawful],
-    *,
-    settings_kwargs: Optional[Dict[str, Any]] = None,
-    use_init: bool = False,
-) -> None:
-    """
+    container_type, **_3to2kwargs
+):
+    if 'use_init' in _3to2kwargs: use_init = _3to2kwargs['use_init']; del _3to2kwargs['use_init']
+    else: use_init =  False
+    if 'settings_kwargs' in _3to2kwargs: settings_kwargs = _3to2kwargs['settings_kwargs']; del _3to2kwargs['settings_kwargs']
+    else: settings_kwargs =  None
+    u"""
     Function to check all defined mathematical laws in a specified container.
 
     Should be used like so:
@@ -79,11 +81,10 @@ def check_all_laws(
 
 @contextmanager
 def container_strategies(
-    container_type: Type[Lawful],
-    *,
-    settings: _Settings,
-) -> Iterator[None]:
-    """
+    container_type, **_3to2kwargs
+):
+    settings = _3to2kwargs['settings']; del _3to2kwargs['settings']
+    u"""
     Registers all types inside a container to resolve to a correct strategy.
 
     For example, let's say we have ``Result`` type.
@@ -92,14 +93,13 @@ def container_strategies(
 
     Can be used independently from other functions.
     """
-    our_interfaces = {
+    our_interfaces = set(
         base_type
         for base_type in container_type.__mro__
         if (
-            getattr(base_type, '__module__', '').startswith('returns.') and
+            getattr(base_type, u'__module__', u'').startswith(u'returns.') and
             base_type != container_type
-        )
-    }
+        ))
     for interface in our_interfaces:
         st.register_type_strategy(
             interface,
@@ -118,11 +118,10 @@ def container_strategies(
 
 @contextmanager
 def maybe_register_container(
-    container_type: Type['Lawful'],
-    *,
-    use_init: bool,
-) -> Iterator[None]:
-    """Temporary registers a container if it is not registered yet."""
+    container_type, **_3to2kwargs
+):
+    use_init = _3to2kwargs['use_init']; del _3to2kwargs['use_init']
+    u"""Temporary registers a container if it is not registered yet."""
     unknown_container = container_type not in types._global_type_lookup
     if unknown_container:
         st.register_type_strategy(
@@ -137,13 +136,13 @@ def maybe_register_container(
 
 
 @contextmanager
-def pure_functions() -> Iterator[None]:
-    """
+def pure_functions():
+    u"""
     Context manager to resolve all ``Callable`` as pure functions.
 
     It is not a default in ``hypothesis``.
     """
-    def factory(thing) -> st.SearchStrategy:
+    def factory(thing):
         like = (lambda: None) if len(
             thing.__args__,
         ) == 1 else (lambda *args, **kwargs: None)
@@ -164,8 +163,8 @@ def pure_functions() -> Iterator[None]:
 
 
 @contextmanager
-def type_vars() -> Iterator[None]:
-    """
+def type_vars():
+    u"""
     Our custom ``TypeVar`` handling.
 
     There are several noticeable differences:
@@ -195,12 +194,11 @@ def type_vars() -> Iterator[None]:
 
 
 def _run_law(
-    container_type: Type[Lawful],
-    law: Law,
-    *,
-    settings: _Settings,
-) -> Callable[[st.DataObject], None]:
-    def factory(source: st.DataObject) -> None:
+    container_type,
+    law, **_3to2kwargs
+):
+    settings = _3to2kwargs['settings']; del _3to2kwargs['settings']
+    def factory(source):
         with type_vars():
             with pure_functions():
                 with container_strategies(container_type, settings=settings):
@@ -209,12 +207,11 @@ def _run_law(
 
 
 def _create_law_test_case(
-    container_type: Type[Lawful],
-    interface: Type[Lawful],
-    law: Law,
-    *,
-    settings: _Settings,
-) -> None:
+    container_type,
+    interface,
+    law, **_3to2kwargs
+):
+    settings = _3to2kwargs['settings']; del _3to2kwargs['settings']
     test_function = given(st.data())(
         hypothesis_settings(**settings.settings_kwargs)(
             _run_law(container_type, law, settings=settings),
@@ -224,7 +221,7 @@ def _create_law_test_case(
     called_from = inspect.stack()[2]
     module = inspect.getmodule(called_from[0])
 
-    template = 'test_{container}_{interface}_{name}'
+    template = u'test_{container}_{interface}_{name}'
     test_function.__name__ = template.format(  # noqa: WPS125
         container=container_type.__qualname__.lower(),
         interface=interface.__qualname__.lower(),

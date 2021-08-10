@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from returns.context import RequiresContextIOResultE
 from returns.io import IOSuccess
 
 
 def test_regression394():
-    """
+    u"""
     It used to raise ``ImmutableStateError`` for type aliases.
 
     Here we use the minimal reproduction sample.

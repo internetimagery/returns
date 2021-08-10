@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from types import MappingProxyType
 from typing import List, Optional, overload
 
@@ -21,28 +22,27 @@ _KIND_MAPPING: Final = MappingProxyType({
 
 @overload
 def analyze_call(
-    function: FunctionLike,
-    args: List[FuncArg],
-    ctx: CallableContext,
-    *,
-    show_errors: Literal[True],
-) -> CallableType:
-    """Case when errors are reported and we cannot get ``None``."""
+    function,
+    args,
+    ctx, **_3to2kwargs
+):
+    show_errors = _3to2kwargs['show_errors']; del _3to2kwargs['show_errors']
+    u"""Case when errors are reported and we cannot get ``None``."""
 
 
 @overload
 def analyze_call(
-    function: FunctionLike,
-    args: List[FuncArg],
-    ctx: CallableContext,
-    *,
-    show_errors: bool,
-) -> Optional[CallableType]:
-    """Errors are not reported, we can get ``None`` when errors happen."""
+    function,
+    args,
+    ctx, **_3to2kwargs
+):
+    show_errors = _3to2kwargs['show_errors']; del _3to2kwargs['show_errors']
+    u"""Errors are not reported, we can get ``None`` when errors happen."""
 
 
-def analyze_call(function, args, ctx, *, show_errors):
-    """
+def analyze_call(function, args, ctx, **_3to2kwargs):
+    show_errors = _3to2kwargs['show_errors']; del _3to2kwargs['show_errors']
+    u"""
     Analyzes function call based on passed arguments.
 
     Internally uses ``check_call`` from ``mypy``.
@@ -67,10 +67,10 @@ def analyze_call(function, args, ctx, *, show_errors):
 
 
 def safe_translate_to_function(
-    function_def: MypyType,
-    ctx: CallableContext,
-) -> MypyType:
-    """
+    function_def,
+    ctx,
+):
+    u"""
     Transforms many other types to something close to callable type.
 
     There's why we need it:
@@ -97,10 +97,10 @@ def safe_translate_to_function(
 
 
 def translate_to_function(
-    function_def: MypyType,
-    ctx: CallableContext,
-) -> MypyType:
-    """
+    function_def,
+    ctx,
+):
+    u"""
     Tryies to translate a type into callable by accessing ``__call__`` attr.
 
     This might fail with ``mypy`` errors and that's how it must work.
@@ -108,7 +108,7 @@ def translate_to_function(
     """
     checker = ctx.api.expr_checker  # type: ignore
     return analyze_member_access(
-        '__call__',
+        u'__call__',
         function_def,
         ctx.context,
         is_lvalue=False,

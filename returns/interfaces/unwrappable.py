@@ -1,14 +1,15 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
-_UnwrappableType = TypeVar('_UnwrappableType', bound='Unwrappable')
+_UnwrappableType = TypeVar(u'_UnwrappableType', bound=u'Unwrappable')
 
 
 class Unwrappable(Generic[_FirstType, _SecondType]):
-    """
+    u"""
     Represents containers that can unwrap and return its wrapped value.
 
     There are no aliases or ``UnwrappableN`` for ``Unwrappable`` interface.
@@ -19,8 +20,8 @@ class Unwrappable(Generic[_FirstType, _SecondType]):
     """
 
     @abstractmethod
-    def unwrap(self: _UnwrappableType) -> _FirstType:
-        """
+    def unwrap(self):
+        u"""
         Custom magic method to unwrap inner value from container.
 
         Should be redefined for ones that actually have values.
@@ -35,8 +36,8 @@ class Unwrappable(Generic[_FirstType, _SecondType]):
         """
 
     @abstractmethod
-    def failure(self: _UnwrappableType) -> _SecondType:
-        """
+    def failure(self):
+        u"""
         Custom magic method to unwrap inner value from the failed container.
 
         .. note::

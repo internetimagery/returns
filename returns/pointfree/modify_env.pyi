@@ -1,0 +1,6 @@
+from returns.primitives.hkt import Kind2 as Kind2, Kind3 as Kind3, Kinded as Kinded
+from typing import Callable
+
+def modify_env2(function: Callable[[_UpdatedType], _SecondType]) -> Kinded[Callable[[Kind2[_Reader2Kind, _FirstType, _SecondType]], Kind2[_Reader2Kind, _FirstType, _UpdatedType]]]: ...
+def modify_env3(function: Callable[[_UpdatedType], _ThirdType]) -> Kinded[Callable[[Kind3[_Reader3Kind, _FirstType, _SecondType, _ThirdType]], Kind3[_Reader3Kind, _FirstType, _SecondType, _UpdatedType]]]: ...
+modify_env = modify_env3

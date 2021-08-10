@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Callable, ClassVar, NoReturn, Sequence, TypeVar
 
 from typing_extensions import final
@@ -14,18 +15,17 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
 
 # Only used in laws:
-_NewType1 = TypeVar('_NewType1')
-_NewType2 = TypeVar('_NewType2')
+_NewType1 = TypeVar(u'_NewType1')
+_NewType2 = TypeVar(u'_NewType2')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Container laws.
 
     Definition: https://wiki.haskell.org/Monad_laws
@@ -34,14 +34,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def left_identity_law(
-        raw_value: _FirstType,
-        container: 'ContainerN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_FirstType],
-            KindN['ContainerN', _NewType1, _SecondType, _ThirdType],
-        ],
-    ) -> None:
-        """
+        raw_value,
+        container,
+        function,
+    ):
+        u"""
         Left identity.
 
         The first law states that if we take a value, put it in a default
@@ -55,9 +52,9 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def right_identity_law(
-        container: 'ContainerN[_FirstType, _SecondType, _ThirdType]',
-    ) -> None:
-        """
+        container,
+    ):
+        u"""
         Right identity.
 
         The second law states that if we have a container value
@@ -73,17 +70,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def associative_law(
-        container: 'ContainerN[_FirstType, _SecondType, _ThirdType]',
-        first: Callable[
-            [_FirstType],
-            KindN['ContainerN', _NewType1, _SecondType, _ThirdType],
-        ],
-        second: Callable[
-            [_NewType1],
-            KindN['ContainerN', _NewType2, _SecondType, _ThirdType],
-        ],
-    ) -> None:
-        """
+        container,
+        first,
+        second,
+    ):
+        u"""
         Associativity law.
 
         The final monad law says that when
@@ -96,12 +87,14 @@ class _LawSpec(LawSpecDef):
         )
 
 
+_LawSpec = final(_LawSpec)
+
 class ContainerN(
     applicative.ApplicativeN[_FirstType, _SecondType, _ThirdType],
     bindable.BindableN[_FirstType, _SecondType, _ThirdType],
-    Lawful['ContainerN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'ContainerN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Handy alias for types with ``.bind``, ``.map``, and ``.apply`` methods.
 
     Should be a base class for almost any containers you write.

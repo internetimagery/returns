@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, TypeVar
@@ -8,27 +9,21 @@ from returns.primitives.hkt import Kinded, KindN, kinded
 if TYPE_CHECKING:
     from returns.context import ReaderIOResult  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
 _ReaderIOResultLikeKind = TypeVar(
-    '_ReaderIOResultLikeKind',
+    u'_ReaderIOResultLikeKind',
     bound=ReaderIOResultLikeN,
 )
 
 
 def bind_context_ioresult(
-    function: Callable[
-        [_FirstType],
-        'ReaderIOResult[_UpdatedType, _SecondType, _ThirdType]',
-    ],
-) -> Kinded[Callable[
-    [KindN[_ReaderIOResultLikeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_ReaderIOResultLikeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Lifts function from ``RequiresContextIOResult`` for better composition.
 
     In other words, it modifies the function's
@@ -62,12 +57,7 @@ def bind_context_ioresult(
     """
     @kinded
     def factory(
-        container: KindN[
-            _ReaderIOResultLikeKind,
-            _FirstType,
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[_ReaderIOResultLikeKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_context_ioresult(function)
     return factory

@@ -1,23 +1,21 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.mappable import MappableN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_MappableKind = TypeVar('_MappableKind', bound=MappableN)
+_MappableKind = TypeVar(u'_MappableKind', bound=MappableN)
 
 
 def map_(
-    function: Callable[[_FirstType], _UpdatedType],
-) -> Kinded[Callable[
-    [KindN[_MappableKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_MappableKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Lifts function to be wrapped in a container for better composition.
 
     In other words, it modifies the function's
@@ -46,7 +44,7 @@ def map_(
     """
     @kinded
     def factory(
-        container: KindN[_MappableKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_MappableKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.map(function)
     return factory

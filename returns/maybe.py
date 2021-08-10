@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import ABCMeta
 from functools import wraps
 from typing import (
@@ -20,21 +21,21 @@ from returns.primitives.exceptions import UnwrapFailedError
 from returns.primitives.hkt import Kind1, SupportsKind1
 
 # Definitions:
-_ValueType = TypeVar('_ValueType', covariant=True)
-_NewValueType = TypeVar('_NewValueType')
+_ValueType = TypeVar(u'_ValueType', covariant=True)
+_NewValueType = TypeVar(u'_NewValueType')
 
 # Aliases:
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
 
 class Maybe(
     BaseContainer,
-    SupportsKind1['Maybe', _ValueType],
+    SupportsKind1[u'Maybe', _ValueType],
     MaybeBased2[_ValueType, None],
-    metaclass=ABCMeta,
 ):
-    """
+    __metaclass__ = ABCMeta
+    u"""
     Represents a result of a series of computations that can return ``None``.
 
     An alternative to using exceptions or constant ``is None`` checks.
@@ -47,26 +48,26 @@ class Maybe(
     """
 
     _inner_value: Optional[_ValueType]
-    __match_args__ = ('_inner_value',)
+    __match_args__ = (u'_inner_value',)
 
     #: Alias for `Nothing`
-    empty: ClassVar['Maybe[Any]']
+    empty: ClassVar[u'Maybe[Any]']
 
     # These two are required for projects like `classes`:
 
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type['Some']]
+    success_type: ClassVar[Type[u'Some']]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type['_Nothing']]
+    failure_type: ClassVar[Type[u'_Nothing']]
 
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
 
     def map(
         self,
-        function: Callable[[_ValueType], _NewValueType],
-    ) -> 'Maybe[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a pure function.
 
         .. code:: python
@@ -82,9 +83,9 @@ class Maybe(
 
     def apply(
         self,
-        function: Kind1['Maybe', Callable[[_ValueType], _NewValueType]],
-    ) -> 'Maybe[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -103,9 +104,9 @@ class Maybe(
 
     def bind(
         self,
-        function: Callable[[_ValueType], Kind1['Maybe', _NewValueType]],
-    ) -> 'Maybe[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a function that returns a container.
 
         .. code:: python
@@ -121,9 +122,9 @@ class Maybe(
 
     def bind_optional(
         self,
-        function: Callable[[_ValueType], Optional[_NewValueType]],
-    ) -> 'Maybe[_NewValueType]':
-        """
+        function,
+    ):
+        u"""
         Binds a function returning an optional value over a container.
 
         .. code:: python
@@ -141,9 +142,9 @@ class Maybe(
 
     def lash(
         self,
-        function: Callable[[Any], Kind1['Maybe', _ValueType]],
-    ) -> 'Maybe[_ValueType]':
-        """
+        function,
+    ):
+        u"""
         Composes failed container with a function that returns a container.
 
         .. code:: python
@@ -163,9 +164,9 @@ class Maybe(
 
     def value_or(
         self,
-        default_value: _NewValueType,
-    ) -> Union[_ValueType, _NewValueType]:
-        """
+        default_value,
+    ):
+        u"""
         Get value from successful container or default value from failed one.
 
         .. code:: python
@@ -178,9 +179,9 @@ class Maybe(
 
     def or_else_call(
         self,
-        function: Callable[[], _NewValueType],
-    ) -> Union[_ValueType, _NewValueType]:
-        """
+        function,
+    ):
+        u"""
         Get value from successful container or default value from failed one.
 
         Really close to :meth:`~Maybe.value_or` but works with lazy values.
@@ -213,8 +214,8 @@ class Maybe(
 
         """
 
-    def unwrap(self) -> _ValueType:
-        """
+    def unwrap(self):
+        u"""
         Get value from successful container or raise exception for failed one.
 
         .. code:: pycon
@@ -230,8 +231,8 @@ class Maybe(
 
         """  # noqa: RST307
 
-    def failure(self) -> None:
-        """
+    def failure(self):
+        u"""
         Get failed value from failed container or raise exception from success.
 
         .. code:: pycon
@@ -249,9 +250,9 @@ class Maybe(
 
     @classmethod
     def from_value(
-        cls, inner_value: _NewValueType,
-    ) -> 'Maybe[_NewValueType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new instance of ``Maybe`` container based on a value.
 
         .. code:: python
@@ -265,9 +266,9 @@ class Maybe(
 
     @classmethod
     def from_optional(
-        cls, inner_value: Optional[_NewValueType],
-    ) -> 'Maybe[_NewValueType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new instance of ``Maybe`` container based on an optional value.
 
         .. code:: python
@@ -282,20 +283,19 @@ class Maybe(
         return Some(inner_value)
 
 
-@final
 class _Nothing(Maybe[Any]):
-    """Represents an empty state."""
+    u"""Represents an empty state."""
 
     _inner_value: None
-    _instance: Optional['_Nothing'] = None
+    _instance: Optional[u'_Nothing'] = None
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> '_Nothing':
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = object.__new__(cls)  # noqa: WPS609
         return cls._instance
 
-    def __init__(self, inner_value: None = None) -> None:  # noqa: WPS632
-        """
+    def __init__(self, inner_value = None):  # noqa: WPS632
+        u"""
         Private constructor for ``_Nothing`` type.
 
         Use :attr:`~Nothing` instead.
@@ -303,10 +303,10 @@ class _Nothing(Maybe[Any]):
 
         ``inner_value`` can only be ``None``.
         """
-        super().__init__(None)
+        super(_Nothing, self).__init__(None)
 
     def __repr__(self):
-        """
+        u"""
         Custom ``str`` definition without the state inside.
 
         .. code:: python
@@ -316,48 +316,49 @@ class _Nothing(Maybe[Any]):
           >>> assert repr(Nothing) == '<Nothing>'
 
         """
-        return '<Nothing>'
+        return u'<Nothing>'
 
     def map(self, function):
-        """Does nothing for ``Nothing``."""
+        u"""Does nothing for ``Nothing``."""
         return self
 
     def apply(self, container):
-        """Does nothing for ``Nothing``."""
+        u"""Does nothing for ``Nothing``."""
         return self
 
     def bind(self, function):
-        """Does nothing for ``Nothing``."""
+        u"""Does nothing for ``Nothing``."""
         return self
 
     def bind_optional(self, function):
-        """Does nothing."""
+        u"""Does nothing."""
         return self
 
     def lash(self, function):
-        """Composes this container with a function returning container."""
+        u"""Composes this container with a function returning container."""
         return function(None)
 
     def value_or(self, default_value):
-        """Returns default value."""
+        u"""Returns default value."""
         return default_value
 
     def or_else_call(self, function):
-        """Returns the result of a passed function."""
+        u"""Returns the result of a passed function."""
         return function()
 
     def unwrap(self):
-        """Raises an exception, since it does not have a value inside."""
+        u"""Raises an exception, since it does not have a value inside."""
         raise UnwrapFailedError(self)
 
-    def failure(self) -> None:
-        """Returns failed value."""
+    def failure(self):
+        u"""Returns failed value."""
         return self._inner_value
 
 
-@final
+_Nothing = final(_Nothing)
+
 class Some(Maybe[_ValueType]):
-    """
+    u"""
     Represents a calculation which has succeeded and contains the value.
 
     Quite similar to ``Success`` type.
@@ -365,49 +366,51 @@ class Some(Maybe[_ValueType]):
 
     _inner_value: _ValueType
 
-    def __init__(self, inner_value: _ValueType) -> None:
-        """Some constructor."""
-        super().__init__(inner_value)
+    def __init__(self, inner_value):
+        u"""Some constructor."""
+        super(Some, self).__init__(inner_value)
 
     if not TYPE_CHECKING:  # noqa: WPS604  # pragma: no branch
         def bind(self, function):
-            """Binds current container to a function that returns container."""
+            u"""Binds current container to a function that returns container."""
             return function(self._inner_value)
 
         def bind_optional(self, function):
-            """Binds a function returning an optional value over a container."""
+            u"""Binds a function returning an optional value over a container."""
             return Maybe.from_optional(function(self._inner_value))
 
         def unwrap(self):
-            """Returns inner value for successful container."""
+            u"""Returns inner value for successful container."""
             return self._inner_value
 
     def map(self, function):
-        """Composes current container with a pure function."""
+        u"""Composes current container with a pure function."""
         return Some(function(self._inner_value))
 
     def apply(self, container):
-        """Calls a wrapped function in a container on this container."""
+        u"""Calls a wrapped function in a container on this container."""
         if isinstance(container, self.success_type):
             return self.map(container.unwrap())  # type: ignore
         return container
 
     def lash(self, function):
-        """Does nothing for ``Some``."""
+        u"""Does nothing for ``Some``."""
         return self
 
     def value_or(self, default_value):
-        """Returns inner value for successful container."""
+        u"""Returns inner value for successful container."""
         return self._inner_value
 
     def or_else_call(self, function):
-        """Returns inner value for successful container."""
+        u"""Returns inner value for successful container."""
         return self._inner_value
 
     def failure(self):
-        """Raises exception for successful container."""
+        u"""Raises exception for successful container."""
         raise UnwrapFailedError(self)
 
+
+Some = final(Some)
 
 Maybe.success_type = Some
 Maybe.failure_type = _Nothing
@@ -418,9 +421,9 @@ Maybe.empty = Nothing
 
 
 def maybe(
-    function: Callable[..., Optional[_ValueType]],
-) -> Callable[..., Maybe[_ValueType]]:
-    """
+    function,
+):
+    u"""
     Decorator to convert ``None``-returning function to ``Maybe`` container.
 
     This decorator works with sync functions only. Example:

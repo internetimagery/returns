@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, ClassVar, NoReturn, Sequence, Type, TypeVar
 
@@ -16,21 +17,20 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_ApplicativeType = TypeVar('_ApplicativeType', bound='ApplicativeN')
+_ApplicativeType = TypeVar(u'_ApplicativeType', bound=u'ApplicativeN')
 
 # Only used in laws:
-_NewType1 = TypeVar('_NewType1')
-_NewType2 = TypeVar('_NewType2')
+_NewType1 = TypeVar(u'_NewType1')
+_NewType2 = TypeVar(u'_NewType2')
 
 
-@final
 class _LawSpec(LawSpecDef):
-    """
+    u"""
     Applicative mappable laws.
 
     Definition: https://bit.ly/3hC8F8E
@@ -39,9 +39,9 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def identity_law(
-        container: 'ApplicativeN[_FirstType, _SecondType, _ThirdType]',
-    ) -> None:
-        """
+        container,
+    ):
+        u"""
         Identity law.
 
         If we apply wrapped ``identity`` function to a container,
@@ -54,11 +54,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def interchange_law(
-        raw_value: _FirstType,
-        container: 'ApplicativeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewType1],
-    ) -> None:
-        """
+        raw_value,
+        container,
+        function,
+    ):
+        u"""
         Interchange law.
 
         Basically we check that we can start our composition
@@ -77,11 +77,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def homomorphism_law(
-        raw_value: _FirstType,
-        container: 'ApplicativeN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewType1],
-    ) -> None:
-        """
+        raw_value,
+        container,
+        function,
+    ):
+        u"""
         Homomorphism law.
 
         The homomorphism law says that
@@ -98,11 +98,11 @@ class _LawSpec(LawSpecDef):
 
     @law_definition
     def composition_law(
-        container: 'ApplicativeN[_FirstType, _SecondType, _ThirdType]',
-        first: Callable[[_FirstType], _NewType1],
-        second: Callable[[_NewType1], _NewType2],
-    ) -> None:
-        """
+        container,
+        first,
+        second,
+    ):
+        u"""
         Composition law.
 
         Applying two functions twice is the same
@@ -118,11 +118,13 @@ class _LawSpec(LawSpecDef):
         )
 
 
+_LawSpec = final(_LawSpec)
+
 class ApplicativeN(
     mappable.MappableN[_FirstType, _SecondType, _ThirdType],
-    Lawful['ApplicativeN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'ApplicativeN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Allows to create unit containers from raw values and to apply wrapped funcs.
 
     See also:
@@ -140,23 +142,18 @@ class ApplicativeN(
 
     @abstractmethod
     def apply(
-        self: _ApplicativeType,
-        container: KindN[
-            _ApplicativeType,
-            Callable[[_FirstType], _UpdatedType],
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[_ApplicativeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Allows to apply a wrapped function over a container."""
+        self,
+        container,
+    ):
+        u"""Allows to apply a wrapped function over a container."""
 
     @classmethod
     @abstractmethod
     def from_value(
-        cls: Type[_ApplicativeType],  # noqa: N805
-        inner_value: _UpdatedType,
-    ) -> KindN[_ApplicativeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Unit method to create new containers from any raw value."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from any raw value."""
 
 
 #: Type alias for kinds with one type argument.

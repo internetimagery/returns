@@ -1,37 +1,23 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar, Union
 
 from returns.interfaces.failable import DiverseFailableN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_NewFirstType = TypeVar('_NewFirstType')
-_SecondType = TypeVar('_SecondType')
-_NewSecondType = TypeVar('_NewSecondType')
-_ThirdType = TypeVar('_ThirdType')
-_NewThirdType = TypeVar('_NewThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_NewFirstType = TypeVar(u'_NewFirstType')
+_SecondType = TypeVar(u'_SecondType')
+_NewSecondType = TypeVar(u'_NewSecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_NewThirdType = TypeVar(u'_NewThirdType')
 
-_DiverseFailableKind = TypeVar('_DiverseFailableKind', bound=DiverseFailableN)
+_DiverseFailableKind = TypeVar(u'_DiverseFailableKind', bound=DiverseFailableN)
 
 
 def unify(  # noqa: WPS234
-    function: Callable[
-        [_FirstType],
-        KindN[
-            _DiverseFailableKind, _NewFirstType, _NewSecondType, _NewThirdType,
-        ],
-    ],
-) -> Kinded[
-    Callable[
-        [KindN[_DiverseFailableKind, _FirstType, _SecondType, _ThirdType]],
-        KindN[
-            _DiverseFailableKind,
-            _NewFirstType,
-            Union[_SecondType, _NewSecondType],
-            _NewThirdType,
-        ],
-    ]
-]:
-    """
+    function,
+):
+    u"""
     Composes successful container with a function that returns a container.
 
     Similar to :func:`~returns.pointfree.bind` but has different type.
@@ -57,14 +43,7 @@ def unify(  # noqa: WPS234
     """
     @kinded
     def factory(
-        container: KindN[
-            _DiverseFailableKind, _FirstType, _SecondType, _ThirdType,
-        ],
-    ) -> KindN[
-        _DiverseFailableKind,
-        _NewFirstType,
-        Union[_SecondType, _NewSecondType],
-        _NewThirdType,
-    ]:
+        container,
+    ):
         return container.bind(function)  # type: ignore
     return factory

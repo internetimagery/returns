@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 from inspect import getdoc
 from typing import List, Tuple
 
@@ -7,20 +9,20 @@ from returns.curry import curry
 
 
 def test_docstring():
-    """Ensures that we preserve docstrings from curried function."""
+    u"""Ensures that we preserve docstrings from curried function."""
 
     @curry
-    def factory(arg: int, other: int) -> None:
-        """Some docstring."""
+    def factory(arg, other):
+        u"""Some docstring."""
 
-    assert getdoc(factory) == 'Some docstring.'
+    assert getdoc(factory) == u'Some docstring.'
 
 
 def test_immutable():
-    """Check that arguments from previous calls are immutable."""
+    u"""Check that arguments from previous calls are immutable."""
 
     @curry
-    def factory(arg: int, other: int) -> Tuple[int, int]:
+    def factory(arg, other):
         return (arg, other)
 
     cached = factory(arg=1)
@@ -29,20 +31,20 @@ def test_immutable():
 
 
 def test_no_args():
-    """Ensures that it is possible to curry a function with empty args."""
+    u"""Ensures that it is possible to curry a function with empty args."""
 
     @curry
-    def factory() -> int:
+    def factory():
         return 1
 
     assert factory() == 1
 
 
 def test_one_arg():
-    """Ensures that it is possible to curry a function with one arg."""
+    u"""Ensures that it is possible to curry a function with one arg."""
 
     @curry
-    def factory(arg: int) -> int:
+    def factory(arg):
         return arg
 
     assert factory(1) == 1
@@ -56,10 +58,10 @@ def test_one_arg():
 
 
 def test_two_args():
-    """Ensures that it is possible to curry a function with two args."""
+    u"""Ensures that it is possible to curry a function with two args."""
 
     @curry
-    def factory(arg: int, other: int) -> Tuple[int, int]:
+    def factory(arg, other):
         return (arg, other)
 
     assert factory(1)(2) == (1, 2)
@@ -83,10 +85,10 @@ def test_two_args():
 
 
 def test_star_args():
-    """Ensures that it is possible to curry a function with ``*args``."""
+    u"""Ensures that it is possible to curry a function with ``*args``."""
 
     @curry
-    def factory(*args: int) -> int:
+    def factory(*args):
         return sum(args)
 
     assert factory() == 0
@@ -103,10 +105,10 @@ def test_star_args():
 
 
 def test_arg_and_star_args():
-    """Ensures that it is possible to curry a function with ``*args``."""
+    u"""Ensures that it is possible to curry a function with ``*args``."""
 
     @curry
-    def factory(arg: int, *args: int) -> int:
+    def factory(arg, *args):
         return arg + sum(args)
 
     assert factory(1) == 1
@@ -118,18 +120,18 @@ def test_arg_and_star_args():
 
 
 def test_star_kwargs():
-    """Ensures that it is possible to curry a function with ``**kwargs``."""
+    u"""Ensures that it is possible to curry a function with ``**kwargs``."""
 
     @curry
-    def factory(**kwargs: int) -> List[Tuple[str, int]]:
+    def factory(**kwargs):
         return sorted(kwargs.items())
 
     assert not factory()
-    assert factory(arg=1) == [('arg', 1)]
+    assert factory(arg=1) == [(u'arg', 1)]
     assert factory(
         arg=1,
         other=2,
-    ) == [('arg', 1), ('other', 2)]
+    ) == [(u'arg', 1), (u'other', 2)]
 
     with pytest.raises(TypeError):
         factory(1)
@@ -138,22 +140,22 @@ def test_star_kwargs():
 
 
 def test_arg_star_kwargs():
-    """The decorator should work with ``kwargs``."""
+    u"""The decorator should work with ``kwargs``."""
 
     @curry
-    def factory(first: int, **kwargs: int) -> List[Tuple[str, int]]:
-        return [('first', first)] + sorted(kwargs.items())
+    def factory(first, **kwargs):
+        return [(u'first', first)] + sorted(kwargs.items())
 
-    assert factory(1) == [('first', 1)]
-    assert factory(1, arg=2) == [('first', 1), ('arg', 2)]
+    assert factory(1) == [(u'first', 1)]
+    assert factory(1, arg=2) == [(u'first', 1), (u'arg', 2)]
     assert factory(
         first=1,
         arg=2,
-    ) == [('first', 1), ('arg', 2)]
+    ) == [(u'first', 1), (u'arg', 2)]
     assert factory(1, arg=2, other=3) == [
-        ('first', 1),
-        ('arg', 2),
-        ('other', 3),
+        (u'first', 1),
+        (u'arg', 2),
+        (u'other', 3),
     ]
 
     with pytest.raises(TypeError):
@@ -165,10 +167,11 @@ def test_arg_star_kwargs():
 
 
 def test_kwonly():
-    """The decorator should work with kw-only args."""
+    u"""The decorator should work with kw-only args."""
 
     @curry
-    def factory(*args: int, by: int) -> Tuple[int, ...]:
+    def factory(*args, **_3to2kwargs):
+        by = _3to2kwargs['by']; del _3to2kwargs['by']
         return args + (by, )
 
     assert factory(
@@ -178,11 +181,11 @@ def test_kwonly():
 
 
 def test_raises():
-    """Exception raised from the function must not be intercepted."""
+    u"""Exception raised from the function must not be intercepted."""
 
     @curry
-    def factory(arg: int, other: int) -> None:
-        msg = "f() missing 2 required positional arguments: 'a' and 'b'"
+    def factory(arg, other):
+        msg = u"f() missing 2 required positional arguments: 'a' and 'b'"
         raise TypeError(msg)
 
     with pytest.raises(TypeError):

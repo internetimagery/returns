@@ -1,26 +1,24 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.bimappable import BiMappableN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
 
-_UpdatedType1 = TypeVar('_UpdatedType1')
-_UpdatedType2 = TypeVar('_UpdatedType2')
+_UpdatedType1 = TypeVar(u'_UpdatedType1')
+_UpdatedType2 = TypeVar(u'_UpdatedType2')
 
-_BiMappableKind = TypeVar('_BiMappableKind', bound=BiMappableN)
+_BiMappableKind = TypeVar(u'_BiMappableKind', bound=BiMappableN)
 
 
 def bimap(
-    on_first: Callable[[_FirstType], _UpdatedType1],
-    on_second: Callable[[_SecondType], _UpdatedType2],
-) -> Kinded[Callable[
-    [KindN[_BiMappableKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_BiMappableKind, _UpdatedType1, _UpdatedType2, _ThirdType],
-]]:
-    """
+    on_first,
+    on_second,
+):
+    u"""
     Maps container on both: first and second arguments.
 
     Can be used to synchronize state on both success and failure.
@@ -49,7 +47,7 @@ def bimap(
     """
     @kinded
     def factory(
-        container: KindN[_BiMappableKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_BiMappableKind, _UpdatedType1, _UpdatedType2, _ThirdType]:
+        container,
+    ):
         return container.map(on_first).alt(on_second)
     return factory

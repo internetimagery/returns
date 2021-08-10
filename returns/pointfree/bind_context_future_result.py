@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import TYPE_CHECKING, Callable, TypeVar
 
 from returns.interfaces.specific.reader_future_result import (
@@ -8,27 +9,21 @@ from returns.primitives.hkt import Kinded, KindN, kinded
 if TYPE_CHECKING:
     from returns.context import ReaderFutureResult  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
 _ReaderFutureResultLikeKind = TypeVar(
-    '_ReaderFutureResultLikeKind',
+    u'_ReaderFutureResultLikeKind',
     bound=ReaderFutureResultLikeN,
 )
 
 
 def bind_context_future_result(
-    function: Callable[
-        [_FirstType],
-        'ReaderFutureResult[_UpdatedType, _SecondType, _ThirdType]',
-    ],
-) -> Kinded[Callable[
-    [KindN[_ReaderFutureResultLikeKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_ReaderFutureResultLikeKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Lifts function from ``RequiresContextFutureResult`` for better composition.
 
     In other words, it modifies the function's
@@ -60,17 +55,7 @@ def bind_context_future_result(
     """
     @kinded
     def factory(
-        container: KindN[
-            _ReaderFutureResultLikeKind,
-            _FirstType,
-            _SecondType,
-            _ThirdType,
-        ],
-    ) -> KindN[
-        _ReaderFutureResultLikeKind,
-        _UpdatedType,
-        _SecondType,
-        _ThirdType,
-    ]:
+        container,
+    ):
         return container.bind_context_future_result(function)
     return factory

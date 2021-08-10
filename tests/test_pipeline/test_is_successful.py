@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import pytest
 
 from returns.io import IOFailure, IOSuccess
@@ -6,17 +7,17 @@ from returns.pipeline import is_successful
 from returns.result import Failure, Success
 
 
-@pytest.mark.parametrize(('container', 'correct_result'), [
-    (Success('a'), True),
-    (Failure('a'), False),
+@pytest.mark.parametrize((u'container', u'correct_result'), [
+    (Success(u'a'), True),
+    (Failure(u'a'), False),
 
-    (IOSuccess('a'), True),
-    (IOFailure('a'), False),
+    (IOSuccess(u'a'), True),
+    (IOFailure(u'a'), False),
 
-    (Some('a'), True),
+    (Some(u'a'), True),
     (Some(None), True),
     (Nothing, False),
 ])
 def test_is_successful(container, correct_result):
-    """Ensures that successful state works correctly."""
+    u"""Ensures that successful state works correctly."""
     assert is_successful(container) is correct_result

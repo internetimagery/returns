@@ -1,3 +1,5 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 from copy import copy, deepcopy
 
 import pytest
@@ -7,7 +9,7 @@ from returns.result import Failure, Success
 
 
 def test_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     inner_value = 1
 
     assert Success(inner_value).equals(Success(inner_value))
@@ -15,7 +17,7 @@ def test_equals():
 
 
 def test_not_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     inner_value = 1
 
     assert not Success(inner_value).equals(Failure(inner_value))
@@ -25,7 +27,7 @@ def test_not_equals():
 
 
 def test_non_equality():
-    """Ensures that containers are not compared to regular values."""
+    u"""Ensures that containers are not compared to regular values."""
     input_value = 5
 
     assert Failure(input_value) != input_value
@@ -36,7 +38,7 @@ def test_non_equality():
 
 
 def test_is_compare():
-    """Ensures that `is` operator works correctly."""
+    u"""Ensures that `is` operator works correctly."""
     left = Failure(1)
     right = Success(1)
 
@@ -46,7 +48,7 @@ def test_is_compare():
 
 
 def test_immutability_failure():
-    """Ensures that Failure container is immutable."""
+    u"""Ensures that Failure container is immutable."""
     with pytest.raises(ImmutableStateError):
         Failure(0)._inner_state = 1  # noqa: WPS437
 
@@ -61,7 +63,7 @@ def test_immutability_failure():
 
 
 def test_immutability_success():
-    """Ensures that Success container is immutable."""
+    u"""Ensures that Success container is immutable."""
     with pytest.raises(ImmutableStateError):
         Success(0)._inner_state = 1  # noqa: WPS437
 
@@ -76,24 +78,24 @@ def test_immutability_success():
 
 
 def test_success_immutable_copy():
-    """Ensures that Success returns it self when passed to copy function."""
+    u"""Ensures that Success returns it self when passed to copy function."""
     success = Success(1)
     assert success is copy(success)
 
 
 def test_success_immutable_deepcopy():
-    """Ensures that Success returns it self when passed to deepcopy function."""
+    u"""Ensures that Success returns it self when passed to deepcopy function."""
     success = Success(1)
     assert success is deepcopy(success)
 
 
 def test_failure_immutable_copy():
-    """Ensures that Failure returns it self when passed to copy function."""
+    u"""Ensures that Failure returns it self when passed to copy function."""
     failure = Failure(0)
     assert failure is copy(failure)
 
 
 def test_failure_immutable_deepcopy():
-    """Ensures that Failure returns it self when passed to deepcopy function."""
+    u"""Ensures that Failure returns it self when passed to deepcopy function."""
     failure = Failure(0)
     assert failure is deepcopy(failure)

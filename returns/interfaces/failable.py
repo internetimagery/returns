@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import abstractmethod
 from typing import Callable, ClassVar, NoReturn, Sequence, Type, TypeVar
 
@@ -16,22 +17,21 @@ from returns.primitives.laws import (
     law_definition,
 )
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_SingleFailableType = TypeVar('_SingleFailableType', bound='SingleFailableN')
-_DiverseFailableType = TypeVar('_DiverseFailableType', bound='DiverseFailableN')
+_SingleFailableType = TypeVar(u'_SingleFailableType', bound=u'SingleFailableN')
+_DiverseFailableType = TypeVar(u'_DiverseFailableType', bound=u'DiverseFailableN')
 
 # Used in laws:
-_NewFirstType = TypeVar('_NewFirstType')
-_NewSecondType = TypeVar('_NewSecondType')
+_NewFirstType = TypeVar(u'_NewFirstType')
+_NewSecondType = TypeVar(u'_NewSecondType')
 
 
-@final
 class _FailableLawSpec(LawSpecDef):
-    """
+    u"""
     Failable laws.
 
     We need to be sure that ``.lash`` won't lash success types.
@@ -39,26 +39,25 @@ class _FailableLawSpec(LawSpecDef):
 
     @law_definition
     def lash_short_circuit_law(
-        raw_value: _FirstType,
-        container: 'FailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_SecondType],
-            KindN['FailableN', _FirstType, _NewFirstType, _ThirdType],
-        ],
-    ) -> None:
-        """Ensures that you cannot lash a success."""
+        raw_value,
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot lash a success."""
         assert_equal(
             container.from_value(raw_value),
             container.from_value(raw_value).lash(function),
         )
 
 
+_FailableLawSpec = final(_FailableLawSpec)
+
 class FailableN(
     _container.ContainerN[_FirstType, _SecondType, _ThirdType],
     lashable.LashableN[_FirstType, _SecondType, _ThirdType],
-    Lawful['FailableN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'FailableN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Base type for types that can fail.
 
     It is a raw type and should not be used directly.
@@ -77,9 +76,8 @@ Failable2 = FailableN[_FirstType, _SecondType, NoReturn]
 Failable3 = FailableN[_FirstType, _SecondType, _ThirdType]
 
 
-@final
 class _SingleFailableLawSpec(LawSpecDef):
-    """
+    u"""
     Single Failable laws.
 
     We need to be sure that ``.map`` and ``.bind``
@@ -88,10 +86,10 @@ class _SingleFailableLawSpec(LawSpecDef):
 
     @law_definition
     def map_short_circuit_law(
-        container: 'SingleFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewFirstType],
-    ) -> None:
-        """Ensures that you cannot map from the `empty` property."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot map from the `empty` property."""
         assert_equal(
             container.empty,
             container.empty.map(function),
@@ -99,13 +97,10 @@ class _SingleFailableLawSpec(LawSpecDef):
 
     @law_definition
     def bind_short_circuit_law(
-        container: 'SingleFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_FirstType],
-            KindN['SingleFailableN', _NewFirstType, _SecondType, _ThirdType],
-        ],
-    ) -> None:
-        """Ensures that you cannot bind from the `empty` property."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot bind from the `empty` property."""
         assert_equal(
             container.empty,
             container.empty.bind(function),
@@ -113,10 +108,10 @@ class _SingleFailableLawSpec(LawSpecDef):
 
     @law_definition
     def apply_short_circuit_law(
-        container: 'SingleFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewFirstType],
-    ) -> None:
-        """Ensures that you cannot apply from the `empty` property."""
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot apply from the `empty` property."""
         wrapped_function = container.from_value(function)
         assert_equal(
             container.empty,
@@ -124,10 +119,12 @@ class _SingleFailableLawSpec(LawSpecDef):
         )
 
 
+_SingleFailableLawSpec = final(_SingleFailableLawSpec)
+
 class SingleFailableN(
     FailableN[_FirstType, _SecondType, _ThirdType],
 ):
-    """
+    u"""
     Base type for types that have just only one failed value.
 
     Like ``Maybe`` types where the only failed value is ``Nothing``.
@@ -142,9 +139,9 @@ class SingleFailableN(
     @property
     @abstractmethod
     def empty(
-        self: _SingleFailableType,
-    ) -> 'SingleFailableN[_FirstType, _SecondType, _ThirdType]':
-        """This property represents the failed value."""
+        self,
+    ):
+        u"""This property represents the failed value."""
 
 
 #: Type alias for kinds with two types arguments.
@@ -154,9 +151,8 @@ SingleFailable2 = SingleFailableN[_FirstType, _SecondType, NoReturn]
 SingleFailable3 = SingleFailableN[_FirstType, _SecondType, _ThirdType]
 
 
-@final
 class _DiverseFailableLawSpec(LawSpecDef):
-    """
+    u"""
     Diverse Failable laws.
 
     We need to be sure that ``.map``, ``.bind``, ``.apply`` and ``.alt``
@@ -165,11 +161,11 @@ class _DiverseFailableLawSpec(LawSpecDef):
 
     @law_definition
     def map_short_circuit_law(
-        raw_value: _SecondType,
-        container: 'DiverseFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewFirstType],
-    ) -> None:
-        """Ensures that you cannot map a failure."""
+        raw_value,
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot map a failure."""
         assert_equal(
             container.from_failure(raw_value),
             container.from_failure(raw_value).map(function),
@@ -177,14 +173,11 @@ class _DiverseFailableLawSpec(LawSpecDef):
 
     @law_definition
     def bind_short_circuit_law(
-        raw_value: _SecondType,
-        container: 'DiverseFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[
-            [_FirstType],
-            KindN['DiverseFailableN', _NewFirstType, _SecondType, _ThirdType],
-        ],
-    ) -> None:
-        """
+        raw_value,
+        container,
+        function,
+    ):
+        u"""
         Ensures that you cannot bind a failure.
 
         See: https://wiki.haskell.org/Typeclassopedia#MonadFail
@@ -196,11 +189,11 @@ class _DiverseFailableLawSpec(LawSpecDef):
 
     @law_definition
     def apply_short_circuit_law(
-        raw_value: _SecondType,
-        container: 'DiverseFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_FirstType], _NewFirstType],
-    ) -> None:
-        """Ensures that you cannot apply a failure."""
+        raw_value,
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot apply a failure."""
         wrapped_function = container.from_value(function)
         assert_equal(
             container.from_failure(raw_value),
@@ -209,23 +202,25 @@ class _DiverseFailableLawSpec(LawSpecDef):
 
     @law_definition
     def alt_short_circuit_law(
-        raw_value: _SecondType,
-        container: 'DiverseFailableN[_FirstType, _SecondType, _ThirdType]',
-        function: Callable[[_SecondType], _NewFirstType],
-    ) -> None:
-        """Ensures that you cannot alt a success."""
+        raw_value,
+        container,
+        function,
+    ):
+        u"""Ensures that you cannot alt a success."""
         assert_equal(
             container.from_value(raw_value),
             container.from_value(raw_value).alt(function),
         )
 
 
+_DiverseFailableLawSpec = final(_DiverseFailableLawSpec)
+
 class DiverseFailableN(
     FailableN[_FirstType, _SecondType, _ThirdType],
     swappable.SwappableN[_FirstType, _SecondType, _ThirdType],
-    Lawful['DiverseFailableN[_FirstType, _SecondType, _ThirdType]'],
+    Lawful[u'DiverseFailableN[_FirstType, _SecondType, _ThirdType]'],
 ):
-    """
+    u"""
     Base type for types that have any failed value.
 
     Like ``Result`` types.
@@ -241,10 +236,10 @@ class DiverseFailableN(
     @classmethod
     @abstractmethod
     def from_failure(
-        cls: Type[_DiverseFailableType],
-        inner_value: _UpdatedType,
-    ) -> KindN[_DiverseFailableType, _FirstType, _UpdatedType, _ThirdType]:
-        """Unit method to create new containers from any raw value."""
+        cls,
+        inner_value,
+    ):
+        u"""Unit method to create new containers from any raw value."""
 
 
 #: Type alias for kinds with two type arguments.

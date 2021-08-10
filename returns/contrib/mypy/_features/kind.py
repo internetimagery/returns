@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enum import Enum, unique
 from typing import Optional, Sequence, Tuple
 
@@ -20,8 +21,8 @@ from returns.contrib.mypy._typeops.visitor import translate_kind_instance
 
 
 @asserts_fallback_to_any
-def attribute_access(ctx: AttributeContext) -> MypyType:
-    """
+def attribute_access(ctx):
+    u"""
     Ensures that attribute access to ``KindN`` is correct.
 
     In other words:
@@ -67,8 +68,8 @@ def attribute_access(ctx: AttributeContext) -> MypyType:
     )
 
 
-def dekind(ctx: FunctionContext) -> MypyType:
-    """
+def dekind(ctx):
+    u"""
     Infers real type behind ``Kind`` form.
 
     Basically, it turns ``Kind[IO, int]`` into ``IO[int]``.
@@ -93,8 +94,8 @@ def dekind(ctx: FunctionContext) -> MypyType:
 
 
 @asserts_fallback_to_any
-def kinded_signature(ctx: MethodSigContext) -> CallableType:
-    """
+def kinded_signature(ctx):
+    u"""
     Returns the internal function wrapped as ``Kinded[def]``.
 
     Works for ``Kinded`` class when ``__call__`` magic method is used.
@@ -113,8 +114,8 @@ def kinded_signature(ctx: MethodSigContext) -> CallableType:
 
 # TODO: we should raise an error if bound type does not have any `KindN`
 # instances, because that's not how `@kinded` and `Kinded[]` should be used.
-def kinded_call(ctx: MethodContext) -> MypyType:
-    """
+def kinded_call(ctx):
+    u"""
     Reveals the correct return type of ``Kinded.__call__`` method.
 
     Turns ``-> KindN[I, t1, t2, t3]`` into ``-> I[t1, t2, t3]``.
@@ -131,8 +132,8 @@ def kinded_call(ctx: MethodContext) -> MypyType:
 
 
 @asserts_fallback_to_any
-def kinded_get_descriptor(ctx: MethodContext) -> MypyType:
-    """
+def kinded_get_descriptor(ctx):
+    u"""
     Used to analyze ``@kinded`` method calls.
 
     We do this due to ``__get__`` descriptor magic.
@@ -149,20 +150,19 @@ def kinded_get_descriptor(ctx: MethodContext) -> MypyType:
     return ctx.type.copy_modified(args=[signature])
 
 
-@unique  # noqa: WPS600
-class _KindErrors(str, Enum):  # noqa: WPS600
-    """Represents a set of possible errors we can throw during typechecking."""
+class _KindErrors(unicode, Enum):  # noqa: WPS600
+    u"""Represents a set of possible errors we can throw during typechecking."""
 
     dekind_not_instance = (
-        'dekind must be used with Instance as the first type argument'
+        u'dekind must be used with Instance as the first type argument'
     )
-
+_KindErrors = unique  # noqa: WPS600(_KindErrors)
 
 def _crop_kind_args(
-    kind: Instance,
-    limit: Optional[Sequence[MypyType]] = None,
-) -> Tuple[MypyType, ...]:
-    """Returns the correct amount of type arguments for a kind."""
+    kind,
+    limit = None,
+):
+    u"""Returns the correct amount of type arguments for a kind."""
     if limit is None:
         limit = kind.args[0].args  # type: ignore
     return kind.args[1:len(limit) + 1]

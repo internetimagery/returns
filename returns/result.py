@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import ABCMeta
 from functools import wraps
 from inspect import FrameInfo
@@ -22,23 +23,23 @@ from returns.primitives.exceptions import UnwrapFailedError
 from returns.primitives.hkt import Kind2, SupportsKind2
 
 # Definitions:
-_ValueType = TypeVar('_ValueType', covariant=True)
-_NewValueType = TypeVar('_NewValueType')
-_ErrorType = TypeVar('_ErrorType', covariant=True)
-_NewErrorType = TypeVar('_NewErrorType')
+_ValueType = TypeVar(u'_ValueType', covariant=True)
+_NewValueType = TypeVar(u'_NewValueType')
+_ErrorType = TypeVar(u'_ErrorType', covariant=True)
+_NewErrorType = TypeVar(u'_NewErrorType')
 
 # Aliases:
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
 
 
 class Result(
     BaseContainer,
-    SupportsKind2['Result', _ValueType, _ErrorType],
+    SupportsKind2[u'Result', _ValueType, _ErrorType],
     result.ResultBased2[_ValueType, _ErrorType],
-    metaclass=ABCMeta,
 ):
-    """
+    __metaclass__ = ABCMeta
+    u"""
     Base class for :class:`~Failure` and :class:`~Success`.
 
     :class:`~Result` does not have a public constructor.
@@ -50,28 +51,28 @@ class Result(
 
     """
 
-    __slots__ = ('_trace',)
-    __match_args__ = ('_inner_value',)
+    __slots__ = (u'_trace',)
+    __match_args__ = (u'_inner_value',)
 
     _inner_value: Union[_ValueType, _ErrorType]
     _trace: Optional[List[FrameInfo]]
 
     # These two are required for projects like `classes`:
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type['Success']]
+    success_type: ClassVar[Type[u'Success']]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type['Failure']]
+    failure_type: ClassVar[Type[u'Failure']]
 
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
 
     @property
-    def trace(self) -> Optional[List[FrameInfo]]:
-        """Returns a list with stack trace when :func:`~Failure` was called."""
+    def trace(self):
+        u"""Returns a list with stack trace when :func:`~Failure` was called."""
         return self._trace
 
-    def swap(self) -> 'Result[_ErrorType, _ValueType]':
-        """
+    def swap(self):
+        u"""
         Swaps value and error types.
 
         So, values become errors and errors become values.
@@ -89,9 +90,9 @@ class Result(
 
     def map(
         self,
-        function: Callable[[_ValueType], _NewValueType],
-    ) -> 'Result[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a pure function.
 
         .. code:: python
@@ -108,13 +109,9 @@ class Result(
 
     def apply(
         self,
-        container: Kind2[
-            'Result',
-            Callable[[_ValueType], _NewValueType],
-            _ErrorType,
-        ],
-    ) -> 'Result[_NewValueType, _ErrorType]':
-        """
+        container,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -134,12 +131,9 @@ class Result(
 
     def bind(
         self,
-        function: Callable[
-            [_ValueType],
-            Kind2['Result', _NewValueType, _ErrorType],
-        ],
-    ) -> 'Result[_NewValueType, _ErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes successful container with a function that returns a container.
 
         .. code:: python
@@ -162,9 +156,9 @@ class Result(
 
     def alt(
         self,
-        function: Callable[[_ErrorType], _NewErrorType],
-    ) -> 'Result[_ValueType, _NewErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes failed container with a pure function to modify failure.
 
         .. code:: python
@@ -181,11 +175,9 @@ class Result(
 
     def lash(
         self,
-        function: Callable[
-            [_ErrorType], Kind2['Result', _ValueType, _NewErrorType],
-        ],
-    ) -> 'Result[_ValueType, _NewErrorType]':
-        """
+        function,
+    ):
+        u"""
         Composes failed container with a function that returns a container.
 
         .. code:: python
@@ -205,9 +197,9 @@ class Result(
 
     def value_or(
         self,
-        default_value: _NewValueType,
-    ) -> Union[_ValueType, _NewValueType]:
-        """
+        default_value,
+    ):
+        u"""
         Get value or default value.
 
         .. code:: python
@@ -218,8 +210,8 @@ class Result(
 
         """
 
-    def unwrap(self) -> _ValueType:
-        """
+    def unwrap(self):
+        u"""
         Get value or raise exception.
 
         .. code:: pycon
@@ -235,8 +227,8 @@ class Result(
 
         """  # noqa: RST307
 
-    def failure(self) -> _ErrorType:
-        """
+    def failure(self):
+        u"""
         Get failed value or raise exception.
 
         .. code:: pycon
@@ -254,9 +246,9 @@ class Result(
 
     @classmethod
     def from_value(
-        cls, inner_value: _NewValueType,
-    ) -> 'Result[_NewValueType, Any]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         One more value to create success unit values.
 
         It is useful as a united way to create a new value from any container.
@@ -274,9 +266,9 @@ class Result(
 
     @classmethod
     def from_failure(
-        cls, inner_value: _NewErrorType,
-    ) -> 'Result[Any, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         One more value to create failure unit values.
 
         It is useful as a united way to create a new value from any container.
@@ -294,9 +286,9 @@ class Result(
 
     @classmethod
     def from_result(
-        cls, inner_value: 'Result[_NewValueType, _NewErrorType]',
-    ) -> 'Result[_NewValueType, _NewErrorType]':
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates a new ``Result`` instance from existing ``Result`` instance.
 
         .. code:: python
@@ -311,9 +303,8 @@ class Result(
         return inner_value
 
 
-@final  # noqa: WPS338
 class Failure(Result[Any, _ErrorType]):  # noqa: WPS338
-    """
+    u"""
     Represents a calculation which has failed.
 
     It should contain an error code or message.
@@ -321,61 +312,62 @@ class Failure(Result[Any, _ErrorType]):  # noqa: WPS338
 
     _inner_value: _ErrorType
 
-    def __init__(self, inner_value: _ErrorType) -> None:
-        """Failure constructor."""
-        super().__init__(inner_value)
-        object.__setattr__(self, '_trace', self._get_trace())  # noqa: WPS609
+    def __init__(self, inner_value):
+        u"""Failure constructor."""
+        super(Failure, self).__init__(inner_value)
+        object.__setattr__(self, u'_trace', self._get_trace())  # noqa: WPS609
 
     if not TYPE_CHECKING:  # noqa: C901, WPS604  # pragma: no branch
         def alt(self, function):
-            """Composes failed container with a pure function to modify failure."""  # noqa: E501
+            u"""Composes failed container with a pure function to modify failure."""  # noqa: E501
             return Failure(function(self._inner_value))
 
         def map(self, function):
-            """Does nothing for ``Failure``."""
+            u"""Does nothing for ``Failure``."""
             return self
 
         def bind(self, function):
-            """Does nothing for ``Failure``."""
+            u"""Does nothing for ``Failure``."""
             return self
 
         #: Alias for `bind` method. Part of the `ResultBasedN` interface.
         bind_result = bind
 
         def lash(self, function):
-            """Composes this container with a function returning container."""
+            u"""Composes this container with a function returning container."""
             return function(self._inner_value)
 
         def apply(self, container):
-            """Does nothing for ``Failure``."""
+            u"""Does nothing for ``Failure``."""
             return self
 
         def value_or(self, default_value):
-            """Returns default value for failed container."""
+            u"""Returns default value for failed container."""
             return default_value
 
     def swap(self):
-        """Failures swap to :class:`Success`."""
+        u"""Failures swap to :class:`Success`."""
         return Success(self._inner_value)
 
-    def unwrap(self) -> NoReturn:
-        """Raises an exception, since it does not have a value inside."""
+    def unwrap(self):
+        u"""Raises an exception, since it does not have a value inside."""
         if isinstance(self._inner_value, Exception):
-            raise UnwrapFailedError(self) from self._inner_value
+            raise UnwrapFailedError(self)
         raise UnwrapFailedError(self)
 
-    def failure(self) -> _ErrorType:
-        """Returns failed value."""
+    def failure(self):
+        u"""Returns failed value."""
         return self._inner_value
 
-    def _get_trace(self) -> Optional[List[FrameInfo]]:
-        """Method that will be monkey patched when trace is active."""
+    def _get_trace(self):
+        u"""Method that will be monkey patched when trace is active."""
         return None  # noqa: WPS324
 
 
-@final
+Failure = final  # noqa: WPS338(Failure)
+
 class Success(Result[_ValueType, Any]):
-    """
+    u"""
     Represents a calculation which has succeeded and contains the result.
 
     Contains the computation value.
@@ -383,52 +375,54 @@ class Success(Result[_ValueType, Any]):
 
     _inner_value: _ValueType
 
-    def __init__(self, inner_value: _ValueType) -> None:
-        """Success constructor."""
-        super().__init__(inner_value)
+    def __init__(self, inner_value):
+        u"""Success constructor."""
+        super(Success, self).__init__(inner_value)
 
     if not TYPE_CHECKING:  # noqa: C901, WPS604  # pragma: no branch
         def alt(self, function):
-            """Does nothing for ``Success``."""
+            u"""Does nothing for ``Success``."""
             return self
 
         def map(self, function):
-            """Composes current container with a pure function."""
+            u"""Composes current container with a pure function."""
             return Success(function(self._inner_value))
 
         def bind(self, function):
-            """Binds current container to a function that returns container."""
+            u"""Binds current container to a function that returns container."""
             return function(self._inner_value)
 
         #: Alias for `bind` method. Part of the `ResultBasedN` interface.
         bind_result = bind
 
         def lash(self, function):
-            """Does nothing for ``Success``."""
+            u"""Does nothing for ``Success``."""
             return self
 
         def apply(self, container):
-            """Calls a wrapped function in a container on this container."""
+            u"""Calls a wrapped function in a container on this container."""
             if isinstance(container, self.success_type):
                 return self.map(container.unwrap())
             return container
 
         def value_or(self, default_value):
-            """Returns the value for successful container."""
+            u"""Returns the value for successful container."""
             return self._inner_value
 
     def swap(self):
-        """Successes swap to :class:`Failure`."""
+        u"""Successes swap to :class:`Failure`."""
         return Failure(self._inner_value)
 
-    def unwrap(self) -> _ValueType:
-        """Returns the unwrapped value from successful container."""
+    def unwrap(self):
+        u"""Returns the unwrapped value from successful container."""
         return self._inner_value
 
-    def failure(self) -> NoReturn:
-        """Raises an exception for successful container."""
+    def failure(self):
+        u"""Raises an exception for successful container."""
         raise UnwrapFailedError(self)
 
+
+Success = final(Success)
 
 Result.success_type = Success
 Result.failure_type = Failure
@@ -442,9 +436,9 @@ ResultE = Result[_ValueType, Exception]
 # Decorators:
 
 def safe(
-    function: Callable[..., _ValueType],
-) -> Callable[..., ResultE[_ValueType]]:
-    """
+    function,
+):
+    u"""
     Decorator to convert exception-throwing function to ``Result`` container.
 
     Should be used with care, since it only catches ``Exception`` subclasses.
@@ -475,6 +469,6 @@ def safe(
     def decorator(*args, **kwargs):
         try:
             return Success(function(*args, **kwargs))
-        except Exception as exc:
+        except Exception, exc:
             return Failure(exc)
     return decorator

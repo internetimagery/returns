@@ -1,4 +1,4 @@
-"""
+u"""
 Used to register all our types as hypothesis strategies.
 
 See: https://hypothesis.readthedocs.io/en/latest/strategies.html
@@ -8,6 +8,7 @@ interfaces won't be registered!
 
 """
 
+from __future__ import absolute_import
 from typing import Sequence, Type
 
 from hypothesis import strategies as st

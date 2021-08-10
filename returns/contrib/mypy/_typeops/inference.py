@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import List, Mapping, Optional, Tuple, cast
 
 from mypy.argmap import map_actuals_to_formals
@@ -13,14 +14,14 @@ from typing_extensions import final
 from returns.contrib.mypy._structures.args import FuncArg
 from returns.contrib.mypy._structures.types import CallableContext
 from returns.contrib.mypy._typeops.analtype import analyze_call
+from itertools import izip
 
 #: Mapping of `typevar` to real type.
 _Constraints = Mapping[TypeVarId, MypyType]
 
 
-@final
 class CallableInference(object):
-    """
+    u"""
     Used to infer function arguments and return type.
 
     There are multiple ways to do it.
@@ -29,12 +30,12 @@ class CallableInference(object):
 
     def __init__(
         self,
-        case_function: CallableType,
-        ctx: FunctionContext,
-        *,
-        fallback: Optional[CallableType] = None,
-    ) -> None:
-        """
+        case_function,
+        ctx, **_3to2kwargs
+    ):
+        if 'fallback' in _3to2kwargs: fallback = _3to2kwargs['fallback']; del _3to2kwargs['fallback']
+        else: fallback =  None
+        u"""
         Create the callable inference.
 
         Sometimes we need two functions.
@@ -55,18 +56,18 @@ class CallableInference(object):
 
     def from_usage(
         self,
-        applied_args: List[FuncArg],
-    ) -> CallableType:
-        """Infers function constrains from its usage: passed arguments."""
+        applied_args,
+    ):
+        u"""Infers function constrains from its usage: passed arguments."""
         constraints = self._infer_constraints(applied_args)
         inferred = expand_type(self._case_function, constraints)
         return cast(CallableType, inferred)
 
     def _infer_constraints(
         self,
-        applied_args: List[FuncArg],
-    ) -> _Constraints:
-        """Creates mapping of ``typevar`` to real type that we already know."""
+        applied_args,
+    ):
+        u"""Creates mapping of ``typevar`` to real type that we already know."""
         checker = self._ctx.api.expr_checker  # type: ignore
         kinds = [arg.kind for arg in applied_args]
         exprs = [
@@ -87,36 +88,36 @@ class CallableInference(object):
             kinds,
             formal_to_actual,
         )
-        return {
-            constraint.type_var: constraint.target
-            for constraint in constraints
-        }
+        return dict((
+            constraint.type_var, constraint.target)
+            for constraint in constraints)
 
 
-@final
+CallableInference = final(CallableInference)
+
 class PipelineInference(object):
-    """
+    u"""
     Very helpful tool to work with functions like ``flow`` and ``pipe``.
 
     It iterates all over the given list of pipeline steps,
     passes the first argument, and then infers types step by step.
     """
 
-    def __init__(self, instance: MypyType) -> None:
-        """We do need the first argument to start the inference."""
+    def __init__(self, instance):
+        u"""We do need the first argument to start the inference."""
         self._instance = instance
 
     def from_callable_sequence(
         self,
-        pipeline_types: Tuple[MypyType, ...],
-        pipeline_kinds: List[int],
-        ctx: CallableContext,
-    ) -> MypyType:
-        """Pass pipeline functions to infer them one by one."""
+        pipeline_types,
+        pipeline_kinds,
+        ctx,
+    ):
+        u"""Pass pipeline functions to infer them one by one."""
         parameter = FuncArg(None, self._instance, ARG_POS)
         ret_type = ctx.default_return_type
 
-        for pipeline, kind in zip(pipeline_types, pipeline_kinds):
+        for pipeline, kind in izip(pipeline_types, pipeline_kinds):
             ret_type = self._proper_type(
                 analyze_call(
                     cast(FunctionLike, pipeline),
@@ -128,7 +129,9 @@ class PipelineInference(object):
             parameter = FuncArg(None, ret_type, kind)
         return ret_type
 
-    def _proper_type(self, typ: MypyType) -> MypyType:
+    def _proper_type(self, typ):
         if isinstance(typ, CallableType):
             return typ.ret_type
         return typ  # It might be `Instance` or `AnyType` or `Nothing`
+
+PipelineInference = final(PipelineInference)

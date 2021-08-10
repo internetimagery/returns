@@ -1,11 +1,13 @@
+from __future__ import absolute_import
 def assert_equal(
     first,
-    second,
-    *,
-    deps=None,
-    backend: str = 'asyncio',
-) -> None:
-    """
+    second, **_3to2kwargs
+):
+    if 'backend' in _3to2kwargs: backend = _3to2kwargs['backend']; del _3to2kwargs['backend']
+    else: backend =  u'asyncio'
+    if 'deps' in _3to2kwargs: deps = _3to2kwargs['deps']; del _3to2kwargs['deps']
+    else: deps = None
+    u"""
     Custom ``assert`` function to compare two any containers.
 
     The important note here is that
@@ -27,10 +29,12 @@ def assert_equal(
         first, deps=deps, backend=backend,
     ) == _convert(
         second, deps=deps, backend=backend,
-    ), '{0} == {1}'.format(first, second)
+    ), u'{0} == {1}'.format(first, second)
 
 
-def _convert(container, *, deps, backend: str):
+def _convert(container, **_3to2kwargs):
+    backend = _3to2kwargs['backend']; del _3to2kwargs['backend']
+    deps = _3to2kwargs['deps']; del _3to2kwargs['deps']
     from returns.interfaces.specific import future, reader
 
     if isinstance(container, future.AwaitableFutureN):

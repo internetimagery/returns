@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -9,16 +10,16 @@ from returns.primitives.hkt import KindN
 if TYPE_CHECKING:
     from returns.io import IO  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_IOLikeType = TypeVar('_IOLikeType', bound='IOLikeN')
+_IOLikeType = TypeVar(u'_IOLikeType', bound=u'IOLikeN')
 
 
 class IOLikeN(container.ContainerN[_FirstType, _SecondType, _ThirdType]):
-    """
+    u"""
     Represents interface for types that looks like fearless ``IO``.
 
     This type means that ``IO`` cannot fail. Like random numbers, date, etc.
@@ -29,18 +30,18 @@ class IOLikeN(container.ContainerN[_FirstType, _SecondType, _ThirdType]):
 
     @abstractmethod
     def bind_io(
-        self: _IOLikeType,
-        function: Callable[[_FirstType], 'IO[_UpdatedType]'],
-    ) -> KindN[_IOLikeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Allows to apply a wrapped function over a container."""
+        self,
+        function,
+    ):
+        u"""Allows to apply a wrapped function over a container."""
 
     @classmethod
     @abstractmethod
     def from_io(
-        cls: Type[_IOLikeType],  # noqa: N805
-        inner_value: 'IO[_UpdatedType]',
-    ) -> KindN[_IOLikeType, _UpdatedType, _SecondType, _ThirdType]:
-        """Unit method to create new containers from successful ``IO``."""
+        cls,  # noqa: N805
+        inner_value,
+    ):
+        u"""Unit method to create new containers from successful ``IO``."""
 
 
 #: Type alias for kinds with one type argument.
@@ -57,7 +58,7 @@ class IOBasedN(
     IOLikeN[_FirstType, _SecondType, _ThirdType],
     equable.Equable,
 ):
-    """
+    u"""
     Represents the base interface for types that do fearless ``IO``.
 
     This type means that ``IO`` cannot fail. Like random numbers, date, etc.

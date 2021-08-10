@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import List, Type
 
 import pytest
@@ -15,7 +16,7 @@ from returns.primitives.laws import Law, Lawful
 from returns.result import Result
 
 
-@pytest.mark.parametrize('container', [
+@pytest.mark.parametrize(u'container', [
     Result,
     Maybe,
     Future,
@@ -27,8 +28,8 @@ from returns.result import Result
     RequiresContextIOResult,
     RequiresContextResult,
 ])
-def test_laws_resolution(container: Type[Lawful]):
-    """Ensures all tests are unique."""
+def test_laws_resolution(container):
+    u"""Ensures all tests are unique."""
     all_laws: List[Law] = []
     for laws in container.laws().values():
         all_laws.extend(laws)

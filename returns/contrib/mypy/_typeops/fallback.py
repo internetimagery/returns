@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 from functools import wraps
 from typing import Callable, TypeVar
 
 from mypy.types import AnyType, TypeOfAny
 
-_CallableType = TypeVar('_CallableType', bound=Callable)
+_CallableType = TypeVar(u'_CallableType', bound=Callable)
 
 
-def asserts_fallback_to_any(function: _CallableType) -> _CallableType:
-    """
+def asserts_fallback_to_any(function):
+    u"""
     Falls back to ``Any`` when some ``assert ...`` fails in our plugin code.
 
     We often use ``assert isinstance(variable, Instance)``

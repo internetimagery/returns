@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from returns.io import IOFailure, IOSuccess
 
 
 def test_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     inner_value = 1
 
     assert IOSuccess(inner_value).equals(IOSuccess(inner_value))
@@ -10,7 +11,7 @@ def test_equals():
 
 
 def test_not_equals():
-    """Ensures that ``.equals`` method works correctly."""
+    u"""Ensures that ``.equals`` method works correctly."""
     inner_value = 1
 
     assert not IOSuccess(inner_value).equals(IOFailure(inner_value))

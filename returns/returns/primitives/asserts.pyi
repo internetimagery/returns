@@ -1,0 +1,3 @@
+from typing import Any
+
+def assert_equal(first: Any, second: Any, *, deps: Any=..., backend: str=...) -> None: ...

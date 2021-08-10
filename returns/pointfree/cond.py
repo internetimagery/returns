@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Callable, Optional, Type, TypeVar, Union, overload
 
 from returns.context import NoDeps
@@ -5,46 +6,36 @@ from returns.interfaces.failable import DiverseFailableN, SingleFailableN
 from returns.methods.cond import internal_cond
 from returns.primitives.hkt import Kinded, KindN
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
 
-_DiverseFailableKind = TypeVar('_DiverseFailableKind', bound=DiverseFailableN)
-_SingleFailableKind = TypeVar('_SingleFailableKind', bound=SingleFailableN)
-
-
-@overload
-def cond(
-    container_type: Type[_SingleFailableKind],
-    success_value: _ValueType,
-) -> Kinded[
-    Callable[
-        [bool], KindN[_SingleFailableKind, _ValueType, _ErrorType, NoDeps],
-    ]
-]:
-    """Reduce the boilerplate when choosing paths with ``SingleFailableN``."""
+_DiverseFailableKind = TypeVar(u'_DiverseFailableKind', bound=DiverseFailableN)
+_SingleFailableKind = TypeVar(u'_SingleFailableKind', bound=SingleFailableN)
 
 
 @overload
 def cond(
-    container_type: Type[_DiverseFailableKind],
-    success_value: _ValueType,
-    error_value: _ErrorType,
-) -> Kinded[
-    Callable[
-        [bool], KindN[_DiverseFailableKind, _ValueType, _ErrorType, NoDeps],
-    ]
-]:
-    """Reduce the boilerplate when choosing paths with ``DiverseFailableN``."""
+    container_type,
+    success_value,
+):
+    u"""Reduce the boilerplate when choosing paths with ``SingleFailableN``."""
+
+
+@overload
+def cond(
+    container_type,
+    success_value,
+    error_value,
+):
+    u"""Reduce the boilerplate when choosing paths with ``DiverseFailableN``."""
 
 
 def cond(  # type: ignore
-    container_type: Union[
-        Type[_SingleFailableKind], Type[_DiverseFailableKind],
-    ],
-    success_value: _ValueType,
-    error_value: Optional[_ErrorType] = None,
+    container_type,
+    success_value,
+    error_value = None,
 ):
-    """
+    u"""
     Reduce the boilerplate when choosing paths.
 
     Works with ``SingleFailableN`` (e.g. ``Maybe``)
@@ -70,7 +61,7 @@ def cond(  # type: ignore
       >>> assert cond(Maybe, 10.0)(False) == Nothing
 
     """
-    def factory(is_success: bool):
+    def factory(is_success):
         return internal_cond(
             container_type, is_success, success_value, error_value,
         )

@@ -1,26 +1,21 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.bindable import BindableN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_BindableKind = TypeVar('_BindableKind', bound=BindableN)
+_BindableKind = TypeVar(u'_BindableKind', bound=BindableN)
 
 
 def bind(
-    function: Callable[
-        [_FirstType],
-        KindN[_BindableKind, _UpdatedType, _SecondType, _ThirdType],
-    ],
-) -> Kinded[Callable[
-    [KindN[_BindableKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_BindableKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Turns function's input parameter from a regular value to a container.
 
     In other words, it modifies the function
@@ -50,7 +45,7 @@ def bind(
     """
     @kinded
     def factory(
-        container: KindN[_BindableKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_BindableKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind(function)
     return factory

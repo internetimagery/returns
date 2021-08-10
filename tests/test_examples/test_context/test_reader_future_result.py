@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from typing import Sequence, cast
 
 import anyio  # you would need to `pip install anyio`
@@ -11,25 +12,25 @@ from returns.iterables import Fold
 from returns.pipeline import managed
 from returns.result import ResultE, safe
 
-_URL: Final = 'https://jsonplaceholder.typicode.com/posts/{0}'
-_Post = TypedDict('_Post', {
-    'id': int,
-    'userId': int,
-    'title': str,
-    'body': str,
+_URL: Final = u'https://jsonplaceholder.typicode.com/posts/{0}'
+_Post = TypedDict(u'_Post', {
+    u'id': int,
+    u'userId': int,
+    u'title': unicode,
+    u'body': unicode,
 })
 
 
 def _close(
-    client: httpx.AsyncClient,
-    raw_value: ResultE[Sequence[str]],
-) -> FutureResultE[None]:
+    client,
+    raw_value,
+):
     return future_safe(client.aclose)()
 
 
 def _fetch_post(
-    post_id: int,
-) -> RequiresContextFutureResultE[_Post, httpx.AsyncClient]:
+    post_id,
+):
     context: RequiresContextFutureResultE[
         httpx.AsyncClient,
         httpx.AsyncClient,
@@ -45,28 +46,28 @@ def _fetch_post(
 
 
 def _show_titles(
-    number_of_posts: int,
-) -> RequiresContextFutureResultE[Sequence[str], httpx.AsyncClient]:
-    def factory(post: _Post) -> str:
-        return post['title']
+    number_of_posts,
+):
+    def factory(post):
+        return post[u'title']
 
     titles = [
         # Notice how easily we compose async and sync functions:
         _fetch_post(post_id).map(factory)
         # TODO: try `for post_id in (2, 1, 0):` to see how errors work
-        for post_id in range(1, number_of_posts + 1)
+        for post_id in xrange(1, number_of_posts + 1)
     ]
     return Fold.collect(titles, RequiresContextFutureResultE.from_value(()))
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     # Let's fetch 3 titles of posts one-by-one, but with async client,
     # because we want to highlight `managed` in this example:
     managed_httpx = managed(_show_titles(3), _close)
     future_result = managed_httpx(
         FutureResultE.from_value(httpx.AsyncClient(timeout=5)),
     )
-    print(anyio.run(future_result.awaitable))  # noqa: WPS421
+    print anyio.run(future_result.awaitable)  # noqa: WPS421
     # <IOResult: <Success: (
     #    'sunt aut facere repellat provident occaecati ...',
     #    'qui est esse',

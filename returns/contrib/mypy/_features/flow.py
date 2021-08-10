@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 from mypy.plugin import FunctionContext
 from mypy.types import Type as MypyType
 
 from returns.contrib.mypy._typeops.inference import PipelineInference
 
 
-def analyze(ctx: FunctionContext) -> MypyType:
-    """
+def analyze(ctx):
+    u"""
     Helps to analyze ``flow`` function calls.
 
     By default, ``mypy`` cannot infer and check this function call:
@@ -34,7 +35,7 @@ def analyze(ctx: FunctionContext) -> MypyType:
     if not ctx.arg_types[0]:
         return ctx.default_return_type
     if not ctx.arg_types[1]:  # We do require to pass `*functions` arg.
-        ctx.api.fail('Too few arguments for "flow"', ctx.context)
+        ctx.api.fail(u'Too few arguments for "flow"', ctx.context)
         return ctx.default_return_type
 
     # We use custom argument type inference here,

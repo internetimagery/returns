@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeVar
@@ -14,26 +15,25 @@ if TYPE_CHECKING:
     from returns.context.requires_context import RequiresContext
 
 # Context:
-_EnvType = TypeVar('_EnvType', contravariant=True)
-_NewEnvType = TypeVar('_NewEnvType')
+_EnvType = TypeVar(u'_EnvType', contravariant=True)
+_NewEnvType = TypeVar(u'_NewEnvType')
 
 # Result:
-_ValueType = TypeVar('_ValueType', covariant=True)
-_NewValueType = TypeVar('_NewValueType')
-_ErrorType = TypeVar('_ErrorType', covariant=True)
-_NewErrorType = TypeVar('_NewErrorType')
+_ValueType = TypeVar(u'_ValueType', covariant=True)
+_NewValueType = TypeVar(u'_NewValueType')
+_ErrorType = TypeVar(u'_ErrorType', covariant=True)
+_NewErrorType = TypeVar(u'_NewErrorType')
 
 # Helpers:
-_FirstType = TypeVar('_FirstType')
+_FirstType = TypeVar(u'_FirstType')
 
 
-@final
 class RequiresContextResult(
     BaseContainer,
-    SupportsKind3['RequiresContextResult', _ValueType, _ErrorType, _EnvType],
+    SupportsKind3[u'RequiresContextResult', _ValueType, _ErrorType, _EnvType],
     reader_result.ReaderResultBasedN[_ValueType, _ErrorType, _EnvType],
 ):
-    """
+    u"""
     The ``RequiresContextResult`` combinator.
 
     See :class:`returns.context.requires_context.RequiresContext` for more docs.
@@ -104,9 +104,9 @@ class RequiresContextResult(
 
     def __init__(
         self,
-        inner_value: Callable[[_EnvType], Result[_ValueType, _ErrorType]],
-    ) -> None:
-        """
+        inner_value,
+    ):
+        u"""
         Public constructor for this type. Also required for typing.
 
         Only allows functions of kind ``* -> *``
@@ -120,10 +120,10 @@ class RequiresContextResult(
           '<RequiresContextResult: <function <lambda> at ...>>'
 
         """
-        super().__init__(inner_value)
+        super(RequiresContextResult, self).__init__(inner_value)
 
-    def __call__(self, deps: _EnvType) -> Result[_ValueType, _ErrorType]:
-        """
+    def __call__(self, deps):
+        u"""
         Evaluates the wrapped function.
 
         .. code:: python
@@ -145,8 +145,8 @@ class RequiresContextResult(
         """
         return self._inner_value(deps)
 
-    def swap(self) -> RequiresContextResult[_ErrorType, _ValueType, _EnvType]:
-        """
+    def swap(self):
+        u"""
         Swaps value and error types.
 
         So, values become errors and errors become values.
@@ -169,9 +169,9 @@ class RequiresContextResult(
         return RequiresContextResult(lambda deps: self(deps).swap())
 
     def map(
-        self, function: Callable[[_ValueType], _NewValueType],
-    ) -> RequiresContextResult[_NewValueType, _ErrorType, _EnvType]:
-        """
+        self, function,
+    ):
+        u"""
         Composes successful container with a pure function.
 
         .. code:: python
@@ -192,14 +192,9 @@ class RequiresContextResult(
 
     def apply(
         self,
-        container: Kind3[
-            RequiresContextResult,
-            Callable[[_ValueType], _NewValueType],
-            _ErrorType,
-            _EnvType,
-        ],
-    ) -> RequiresContextResult[_NewValueType, _ErrorType, _EnvType]:
-        """
+        container,
+    ):
+        u"""
         Calls a wrapped function in a container on this container.
 
         .. code:: python
@@ -229,17 +224,9 @@ class RequiresContextResult(
 
     def bind(
         self,
-        function: Callable[
-            [_ValueType],
-            Kind3[
-                RequiresContextResult,
-                _NewValueType,
-                _ErrorType,
-                _EnvType,
-            ],
-        ],
-    ) -> RequiresContextResult[_NewValueType, _ErrorType, _EnvType]:
-        """
+        function,
+    ):
+        u"""
         Composes this container with a function returning the same type.
 
         .. code:: python
@@ -276,9 +263,9 @@ class RequiresContextResult(
 
     def bind_result(
         self,
-        function: Callable[[_ValueType], Result[_NewValueType, _ErrorType]],
-    ) -> RequiresContextResult[_NewValueType, _ErrorType, _EnvType]:
-        """
+        function,
+    ):
+        u"""
         Binds ``Result`` returning function to current container.
 
         .. code:: python
@@ -306,12 +293,9 @@ class RequiresContextResult(
 
     def bind_context(
         self,
-        function: Callable[
-            [_ValueType],
-            'RequiresContext[_NewValueType, _EnvType]',
-        ],
-    ) -> RequiresContextResult[_NewValueType, _ErrorType, _EnvType]:
-        """
+        function,
+    ):
+        u"""
         Binds ``RequiresContext`` returning function to current container.
 
         .. code:: python
@@ -340,9 +324,9 @@ class RequiresContextResult(
         )
 
     def alt(
-        self, function: Callable[[_ErrorType], _NewErrorType],
-    ) -> RequiresContextResult[_ValueType, _NewErrorType, _EnvType]:
-        """
+        self, function,
+    ):
+        u"""
         Composes failed container with a pure function.
 
         .. code:: python
@@ -363,17 +347,9 @@ class RequiresContextResult(
 
     def lash(
         self,
-        function: Callable[
-            [_ErrorType],
-            Kind3[
-                RequiresContextResult,
-                _ValueType,
-                _NewErrorType,
-                _EnvType,
-            ],
-        ],
-    ) -> RequiresContextResult[_ValueType, _NewErrorType, _EnvType]:
-        """
+        function,
+    ):
+        u"""
         Composes this container with a function returning the same type.
 
         .. code:: python
@@ -409,9 +385,9 @@ class RequiresContextResult(
 
     def modify_env(
         self,
-        function: Callable[[_NewEnvType], _EnvType],
-    ) -> RequiresContextResult[_ValueType, _ErrorType, _NewEnvType]:
-        """
+        function,
+    ):
+        u"""
         Allows to modify the environment type.
 
         .. code:: python
@@ -431,8 +407,8 @@ class RequiresContextResult(
         return RequiresContextResult(lambda deps: self(function(deps)))
 
     @classmethod
-    def ask(cls) -> RequiresContextResult[_EnvType, _ErrorType, _EnvType]:
-        """
+    def ask(cls):
+        u"""
         Is used to get the current dependencies inside the call stack.
 
         Similar to :meth:`returns.context.requires_context.RequiresContext.ask`,
@@ -457,9 +433,9 @@ class RequiresContextResult(
 
     @classmethod
     def from_result(
-        cls, inner_value: Result[_NewValueType, _NewErrorType],
-    ) -> RequiresContextResult[_NewValueType, _NewErrorType, NoDeps]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new container with ``Result`` as a unit value.
 
         .. code:: python
@@ -482,10 +458,9 @@ class RequiresContextResult(
     @classmethod
     def from_typecast(
         cls,
-        inner_value:
-            'RequiresContext[Result[_NewValueType, _NewErrorType], _EnvType]',
-    ) -> RequiresContextResult[_NewValueType, _NewErrorType, _EnvType]:
-        """
+        inner_value,
+    ):
+        u"""
         You might end up with ``RequiresContext[Result[...]]`` as a value.
 
         This method is designed to turn it into ``RequiresContextResult``.
@@ -511,9 +486,9 @@ class RequiresContextResult(
 
     @classmethod
     def from_context(
-        cls, inner_value: 'RequiresContext[_NewValueType, _NewEnvType]',
-    ) -> RequiresContextResult[_NewValueType, Any, _NewEnvType]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new container from ``RequiresContext`` as a success unit.
 
         .. code:: python
@@ -529,9 +504,9 @@ class RequiresContextResult(
 
     @classmethod
     def from_failed_context(
-        cls, inner_value: 'RequiresContext[_NewValueType, _NewEnvType]',
-    ) -> RequiresContextResult[Any, _NewValueType, _NewEnvType]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new container from ``RequiresContext`` as a failure unit.
 
         .. code:: python
@@ -548,10 +523,9 @@ class RequiresContextResult(
     @classmethod
     def from_result_context(
         cls,
-        inner_value:
-            RequiresContextResult[_NewValueType, _NewErrorType, _NewEnvType],
-    ) -> RequiresContextResult[_NewValueType, _NewErrorType, _NewEnvType]:
-        """
+        inner_value,
+    ):
+        u"""
         Creates ``RequiresContextResult`` from another instance of it.
 
         .. code:: python
@@ -572,9 +546,9 @@ class RequiresContextResult(
 
     @classmethod
     def from_value(
-        cls, inner_value: _FirstType,
-    ) -> RequiresContextResult[_FirstType, Any, NoDeps]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new container with ``Success(inner_value)`` as a unit value.
 
         .. code:: python
@@ -588,9 +562,9 @@ class RequiresContextResult(
 
     @classmethod
     def from_failure(
-        cls, inner_value: _FirstType,
-    ) -> RequiresContextResult[Any, _FirstType, NoDeps]:
-        """
+        cls, inner_value,
+    ):
+        u"""
         Creates new container with ``Failure(inner_value)`` as a unit value.
 
         .. code:: python
@@ -606,6 +580,8 @@ class RequiresContextResult(
 # Aliases:
 
 #: Alias for a popular case when ``Result`` has ``Exception`` as error type.
+RequiresContextResult = final(RequiresContextResult)
+
 RequiresContextResultE = RequiresContextResult[
     _ValueType, Exception, _EnvType,
 ]

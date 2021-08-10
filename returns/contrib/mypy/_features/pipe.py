@@ -1,4 +1,4 @@
-"""
+u"""
 Typing ``pipe`` functions requires several phases.
 
 It is pretty obvious from its usage:
@@ -36,6 +36,7 @@ Here's when it works:
   >>> assert pipeline(0) == 'not bigger'  # `signature and `infer` again
 
 """
+from __future__ import absolute_import
 from typing import Callable, List, Tuple
 
 from mypy.checker import detach_callable
@@ -49,13 +50,13 @@ from returns.contrib.mypy._typeops.analtype import translate_to_function
 from returns.contrib.mypy._typeops.inference import PipelineInference
 
 
-def analyze(ctx: FunctionContext) -> MypyType:
-    """This hook helps when we create the pipeline from sequence of funcs."""
+def analyze(ctx):
+    u"""This hook helps when we create the pipeline from sequence of funcs."""
     if not isinstance(ctx.default_return_type, Instance):
         return ctx.default_return_type
 
     if not ctx.arg_types[0]:  # We do require to pass `*functions` arg.
-        ctx.api.fail('Too few arguments for "pipe"', ctx.context)
+        ctx.api.fail(u'Too few arguments for "pipe"', ctx.context)
         return ctx.default_return_type
 
     arg_types = [arg_type[0] for arg_type in ctx.arg_types if arg_type]
@@ -77,8 +78,8 @@ def analyze(ctx: FunctionContext) -> MypyType:
     )
 
 
-def infer(ctx: MethodContext) -> MypyType:
-    """This hook helps when we finally call the created pipeline."""
+def infer(ctx):
+    u"""This hook helps when we finally call the created pipeline."""
     if not isinstance(ctx.type, Instance):
         return ctx.default_return_type
 
@@ -92,22 +93,22 @@ def infer(ctx: MethodContext) -> MypyType:
     )
 
 
-def signature(ctx: MethodSigContext) -> CallableType:
-    """Helps to fix generics in method signature."""
+def signature(ctx):
+    u"""Helps to fix generics in method signature."""
     return detach_callable(ctx.default_signature)
 
 
-def _get_first_arg_type(case: CallableType) -> MypyType:
-    """Function might not have args at all."""
+def _get_first_arg_type(case):
+    u"""Function might not have args at all."""
     if case.arg_types:
         return case.arg_types[0]
     return AnyType(TypeOfAny.implementation_artifact)
 
 
 def _unify_type(
-    function: FunctionLike,
-    fetch_type: Callable[[CallableType], MypyType],
-) -> MypyType:
+    function,
+    fetch_type,
+):
     return UnionType.make_union([
         fetch_type(case)
         for case in function.items()
@@ -115,9 +116,9 @@ def _unify_type(
 
 
 def _get_pipeline_def(
-    arg_types: List[MypyType],
-    ctx: FunctionContext,
-) -> Tuple[MypyType, MypyType]:
+    arg_types,
+    ctx,
+):
     first_step = get_proper_type(arg_types[0])
     last_step = get_proper_type(arg_types[-1])
 

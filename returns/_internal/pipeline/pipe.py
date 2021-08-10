@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from returns._internal.pipeline.flow import flow
 
 
 def pipe(*functions):
-    """
+    u"""
     Allows to compose a value and up to 7 functions that use this value.
 
     We use a custom ``mypy`` plugin to make sure types are correct.

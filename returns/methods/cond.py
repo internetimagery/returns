@@ -1,44 +1,43 @@
+from __future__ import absolute_import
 from typing import Optional, Type, TypeVar, Union, overload
 
 from returns.context import NoDeps
 from returns.interfaces.failable import DiverseFailableN, SingleFailableN
 from returns.primitives.hkt import KindN, kinded
 
-_ValueType = TypeVar('_ValueType')
-_ErrorType = TypeVar('_ErrorType')
+_ValueType = TypeVar(u'_ValueType')
+_ErrorType = TypeVar(u'_ErrorType')
 
-_SingleFailableKind = TypeVar('_SingleFailableKind', bound=SingleFailableN)
-_DiverseFailableKind = TypeVar('_DiverseFailableKind', bound=DiverseFailableN)
-
-
-@overload
-def internal_cond(
-    container_type: Type[_SingleFailableKind],
-    is_success: bool,
-    success_value: _ValueType,
-) -> KindN[_SingleFailableKind, _ValueType, _ErrorType, NoDeps]:
-    """Reduce the boilerplate when choosing paths with ``SingleFailableN``."""
+_SingleFailableKind = TypeVar(u'_SingleFailableKind', bound=SingleFailableN)
+_DiverseFailableKind = TypeVar(u'_DiverseFailableKind', bound=DiverseFailableN)
 
 
 @overload
 def internal_cond(
-    container_type: Type[_DiverseFailableKind],
-    is_success: bool,
-    success_value: _ValueType,
-    error_value: _ErrorType,
-) -> KindN[_DiverseFailableKind, _ValueType, _ErrorType, NoDeps]:
-    """Reduce the boilerplate when choosing paths with ``DiverseFailableN``."""
+    container_type,
+    is_success,
+    success_value,
+):
+    u"""Reduce the boilerplate when choosing paths with ``SingleFailableN``."""
+
+
+@overload
+def internal_cond(
+    container_type,
+    is_success,
+    success_value,
+    error_value,
+):
+    u"""Reduce the boilerplate when choosing paths with ``DiverseFailableN``."""
 
 
 def internal_cond(  # type: ignore
-    container_type: Union[
-        Type[_SingleFailableKind], Type[_DiverseFailableKind],
-    ],
-    is_success: bool,
-    success_value: _ValueType,
-    error_value: Optional[_ErrorType] = None,
+    container_type,
+    is_success,
+    success_value,
+    error_value = None,
 ):
-    """
+    u"""
     Reduce the boilerplate when choosing paths.
 
     Works with ``SingleFailableN`` (e.g. ``Maybe``)

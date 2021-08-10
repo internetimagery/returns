@@ -1,4 +1,4 @@
-"""
+u"""
 This package contains code that was "generated" via metaprogramming.
 
 This happens, because Python is not flexible enough to do most tasks

@@ -1,26 +1,21 @@
+from __future__ import absolute_import
 from typing import Awaitable, Callable, TypeVar
 
 from returns.interfaces.specific.future import FutureLikeN
 from returns.primitives.hkt import Kinded, KindN, kinded
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_FutureKind = TypeVar('_FutureKind', bound=FutureLikeN)
+_FutureKind = TypeVar(u'_FutureKind', bound=FutureLikeN)
 
 
 def bind_async(
-    function: Callable[
-        [_FirstType],
-        Awaitable[KindN[_FutureKind, _UpdatedType, _SecondType, _ThirdType]],
-    ],
-) -> Kinded[Callable[
-    [KindN[_FutureKind, _FirstType, _SecondType, _ThirdType]],
-    KindN[_FutureKind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Compose a container and ``async`` function returning a container.
 
     In other words, it modifies the function's
@@ -52,7 +47,7 @@ def bind_async(
     """
     @kinded
     def factory(
-        container: KindN[_FutureKind, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_FutureKind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_async(function)
     return factory

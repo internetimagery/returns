@@ -1,16 +1,15 @@
-from functools import reduce
 from typing import TypeVar
 
-_InstanceType = TypeVar('_InstanceType')
-_PipelineStepType = TypeVar('_PipelineStepType')
-_ReturnType = TypeVar('_ReturnType')
+_InstanceType = TypeVar(u'_InstanceType')
+_PipelineStepType = TypeVar(u'_PipelineStepType')
+_ReturnType = TypeVar(u'_ReturnType')
 
 
 def flow(
-    instance: _InstanceType,
-    *functions: _PipelineStepType,
-) -> _ReturnType:
-    """
+    instance,
+    *functions,
+):
+    u"""
     Allows to compose a value and up to multiple functions that use this value.
 
     All starts with the value itself.

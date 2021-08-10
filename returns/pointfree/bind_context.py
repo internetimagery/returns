@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, TypeVar
@@ -8,25 +9,19 @@ from returns.primitives.hkt import Kind2, Kind3, Kinded, kinded
 if TYPE_CHECKING:
     from returns.context import RequiresContext  # noqa: WPS433
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_Reader2Kind = TypeVar('_Reader2Kind', bound=ReaderLike2)
-_Reader3Kind = TypeVar('_Reader3Kind', bound=ReaderLike3)
+_Reader2Kind = TypeVar(u'_Reader2Kind', bound=ReaderLike2)
+_Reader3Kind = TypeVar(u'_Reader3Kind', bound=ReaderLike3)
 
 
 def bind_context2(
-    function: Callable[
-        [_FirstType],
-        'RequiresContext[_UpdatedType, _SecondType]',
-    ],
-) -> Kinded[Callable[
-    [Kind2[_Reader2Kind, _FirstType, _SecondType]],
-    Kind2[_Reader2Kind, _UpdatedType, _SecondType],
-]]:
-    """
+    function,
+):
+    u"""
     Composes successful container with a function that returns a container.
 
     In other words, it modifies the function's
@@ -53,22 +48,16 @@ def bind_context2(
     """
     @kinded
     def factory(
-        container: Kind2[_Reader2Kind, _FirstType, _SecondType],
-    ) -> Kind2[_Reader2Kind, _UpdatedType, _SecondType]:
+        container,
+    ):
         return container.bind_context(function)
     return factory
 
 
 def bind_context3(
-    function: Callable[
-        [_FirstType],
-        'RequiresContext[_UpdatedType, _ThirdType]',
-    ],
-) -> Kinded[Callable[
-    [Kind3[_Reader3Kind, _FirstType, _SecondType, _ThirdType]],
-    Kind3[_Reader3Kind, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    function,
+):
+    u"""
     Composes successful container with a function that returns a container.
 
     In other words, it modifies the function's
@@ -99,8 +88,8 @@ def bind_context3(
     """
     @kinded
     def factory(
-        container: Kind3[_Reader3Kind, _FirstType, _SecondType, _ThirdType],
-    ) -> Kind3[_Reader3Kind, _UpdatedType, _SecondType, _ThirdType]:
+        container,
+    ):
         return container.bind_context(function)
     return factory
 

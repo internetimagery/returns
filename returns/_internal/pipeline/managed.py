@@ -1,31 +1,23 @@
+from __future__ import absolute_import
 from typing import Callable, TypeVar
 
 from returns.interfaces.specific.ioresult import IOResultLikeN
 from returns.primitives.hkt import Kinded, KindN, kinded
 from returns.result import Result
 
-_FirstType = TypeVar('_FirstType')
-_SecondType = TypeVar('_SecondType')
-_ThirdType = TypeVar('_ThirdType')
-_UpdatedType = TypeVar('_UpdatedType')
+_FirstType = TypeVar(u'_FirstType')
+_SecondType = TypeVar(u'_SecondType')
+_ThirdType = TypeVar(u'_ThirdType')
+_UpdatedType = TypeVar(u'_UpdatedType')
 
-_IOResultLikeType = TypeVar('_IOResultLikeType', bound=IOResultLikeN)
+_IOResultLikeType = TypeVar(u'_IOResultLikeType', bound=IOResultLikeN)
 
 
 def managed(
-    use: Callable[
-        [_FirstType],
-        KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType],
-    ],
-    release: Callable[
-        [_FirstType, Result[_UpdatedType, _SecondType]],
-        KindN[_IOResultLikeType, None, _SecondType, _ThirdType],
-    ],
-) -> Kinded[Callable[
-    [KindN[_IOResultLikeType, _FirstType, _SecondType, _ThirdType]],
-    KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType],
-]]:
-    """
+    use,
+    release,
+):
+    u"""
     Allows to run managed computation.
 
     Managed computations consist of three steps:
@@ -91,44 +83,29 @@ def managed(
     """
     @kinded
     def factory(
-        acquire: KindN[_IOResultLikeType, _FirstType, _SecondType, _ThirdType],
-    ) -> KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType]:
+        acquire,
+    ):
         return acquire.bind(_use(acquire, use, release))
     return factory
 
 
 def _use(
-    acquire: KindN[_IOResultLikeType, _FirstType, _SecondType, _ThirdType],
-    use: Callable[
-        [_FirstType],
-        KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType],
-    ],
-    release: Callable[
-        [_FirstType, Result[_UpdatedType, _SecondType]],
-        KindN[_IOResultLikeType, None, _SecondType, _ThirdType],
-    ],
-) -> Callable[
-    [_FirstType],
-    KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType],
-]:
-    """Uses the resource after it is acquired successfully."""
+    acquire,
+    use,
+    release,
+):
+    u"""Uses the resource after it is acquired successfully."""
     return lambda initial: use(initial).compose_result(
         _release(acquire, initial, release),
     )
 
 
 def _release(
-    acquire: KindN[_IOResultLikeType, _FirstType, _SecondType, _ThirdType],
-    initial: _FirstType,
-    release: Callable[
-        [_FirstType, Result[_UpdatedType, _SecondType]],
-        KindN[_IOResultLikeType, None, _SecondType, _ThirdType],
-    ],
-) -> Callable[
-    [Result[_UpdatedType, _SecondType]],
-    KindN[_IOResultLikeType, _UpdatedType, _SecondType, _ThirdType],
-]:
-    """Release handler. Does its job after resource is acquired and used."""
+    acquire,
+    initial,
+    release,
+):
+    u"""Release handler. Does its job after resource is acquired and used."""
     return lambda updated: release(initial, updated).bind(
         lambda _: acquire.from_result(updated),  # noqa: WPS430
     )

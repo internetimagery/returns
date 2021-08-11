@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar
 
+from trollius import coroutine, From, Return
+
 from returns.io import IO, IOResult
 from returns.primitives.hkt import Kind2, dekind
 from returns.result import Failure, Result, Success
@@ -15,153 +17,169 @@ _ErrorType = TypeVar(u'_ErrorType', covariant=True)
 _NewErrorType = TypeVar(u'_NewErrorType')
 
 
-async def async_swap(
+@coroutine
+def async_swap(
     inner_value,
 ):
     u"""Swaps value and error types in ``Result``."""
-    return (await inner_value).swap()
+    raise Return( ((yield From( inner_value ))).swap() )
 
 
-async def async_map(
+@coroutine
+def async_map(
     function,
     inner_value,
 ):
     u"""Async maps a function over a value."""
-    return (await inner_value).map(function)
+    raise Return( ((yield From( inner_value ))).map(function) )
 
 
-async def async_apply(
+@coroutine
+def async_apply(
     container,
     inner_value,
 ):
     u"""Async maps a function over a value."""
-    return (await inner_value).apply((await container)._inner_value)
+    raise Return( ((yield From( inner_value ))).apply(((yield From( container )))._inner_value) )
 
 
-async def async_bind(
+@coroutine
+def async_bind(
     function,
     inner_value,
 ):
     u"""Async binds a container over a value."""
-    container = await inner_value
+    container = (yield From( inner_value )
     if isinstance(container, Result.success_type):
-        return (await dekind(function(container.unwrap())))._inner_value
-    return container  # type: ignore[return-value]
+        raise Return( ((yield From( dekind(function(container.unwrap())) )))._inner_value )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_awaitable(
+@coroutine
+def async_bind_awaitable(
     function,
     inner_value,
 ):
     u"""Async binds a coroutine over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return Result.from_value(await function(container.unwrap()))
-    return container  # type: ignore[return-value]
+        raise Return( Result.from_value((yield From( function(container.unwrap()) ))) )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_async(
+@coroutine
+def async_bind_async(
     function,
     inner_value,
 ):
     u"""Async binds a coroutine with container over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return await dekind(await function(container.unwrap()))._inner_value
-    return container  # type: ignore[return-value]
+        raise Return( (yield From( dekind((yield From( function(container.unwrap()) ))) ))._inner_value )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_result(
+@coroutine
+def async_bind_result(
     function,
     inner_value,
 ):
     u"""Async binds a container returning ``Result`` over a value."""
-    return (await inner_value).bind(function)
+    raise Return( ((yield From( inner_value ))).bind(function) )
 
 
-async def async_bind_ioresult(
+@coroutine
+def async_bind_ioresult(
     function,
     inner_value,
 ):
     u"""Async binds a container returning ``IOResult`` over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return function(container.unwrap())._inner_value
-    return container  # type: ignore[return-value]
+        raise Return( function(container.unwrap())._inner_value )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_io(
+@coroutine
+def async_bind_io(
     function,
     inner_value,
 ):
     u"""Async binds a container returning ``IO`` over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return Success(function(container.unwrap())._inner_value)
-    return container  # type: ignore[return-value]
+        raise Return( Success(function(container.unwrap())._inner_value) )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_future(
+@coroutine
+def async_bind_future(
     function,
     inner_value,
 ):
     u"""Async binds a container returning ``IO`` over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return await async_from_success(function(container.unwrap()))
-    return container  # type: ignore[return-value]
+        raise Return( (yield From( async_from_success(function(container.unwrap())) )) )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_bind_async_future(
+@coroutine
+def async_bind_async_future(
     function,
     inner_value,
 ):
     u"""Async binds a container returning ``IO`` over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return await async_from_success(await function(container.unwrap()))
-    return container  # type: ignore[return-value]
+        raise Return( (yield From( async_from_success((yield From( function(container.unwrap()) ))) )) )
+    raise Return( container )  # type: ignore[return-value]
 
 
-async def async_alt(
+@coroutine
+def async_alt(
     function,
     inner_value,
 ):
     u"""Async alts a function over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return container
-    return Failure(function(container.failure()))
+        raise Return( container )
+    raise Return( Failure(function(container.failure())) )
 
 
-async def async_lash(
+@coroutine
+def async_lash(
     function,
     inner_value,
 ):
     u"""Async lashes a function returning a container over a value."""
-    container = await inner_value
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
-        return container
-    return (await dekind(function(container.failure())))._inner_value
+        raise Return( container )
+    raise Return( ((yield From( dekind(function(container.failure())) )))._inner_value )
 
 
-async def async_from_success(
+@coroutine
+def async_from_success(
     container,
 ):
     u"""Async success unit factory."""
-    return Success((await container)._inner_value)
+    raise Return( Success(((yield From( container )))._inner_value) )
 
 
-async def async_from_failure(
+@coroutine
+def async_from_failure(
     container,
 ):
     u"""Async failure unit factory."""
-    return Failure((await container)._inner_value)
+    raise Return( Failure(((yield From( container )))._inner_value) )
 
 
-async def async_compose_result(
+@coroutine
+def async_compose_result(
     function,
     inner_value,
 ):
     u"""Async composes ``Result`` based function."""
-    return (await dekind(function(await inner_value)))._inner_value
+    raise Return( ((yield From( dekind(function((yield From( inner_value )))) )))._inner_value )

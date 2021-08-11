@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from typing import Awaitable, Callable, Generator, NewType, TypeVar, Union, cast
 
 from typing_extensions import final
+from trollius import coroutines, From, Return
+
 
 _ValueType = TypeVar(u'_ValueType')
 _FunctionCoroType = TypeVar(u'_FunctionCoroType', bound=Callable[..., Awaitable])
@@ -99,11 +101,12 @@ class ReAwaitable(object):
         """
         return repr(self._coro)
 
-    async def _awaitable(self):
+    @coroutine
+    def _awaitable(self):
         u"""Caches the once awaited value forever."""
         if self._cache is _sentinel:
-            self._cache = await self._coro
-        return self._cache  # type: ignore
+            self._cache = yield From( self._coro )
+        raise Return( self._cache )  # type: ignore
 
 
 ReAwaitable = final(ReAwaitable)

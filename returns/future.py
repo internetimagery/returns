@@ -19,6 +19,8 @@ from returns.primitives.hkt import (
 from returns.primitives.reawaitable import ReAwaitable
 from returns.result import Failure, Result, Success
 
+from trollius import coroutine, From, Return
+
 # Definitions:
 _ValueType = TypeVar(u'_ValueType', covariant=True)
 _NewValueType = TypeVar(u'_NewValueType')
@@ -32,7 +34,8 @@ _SecondType = TypeVar(u'_SecondType')
 
 # Public composition helpers:
 
-async def async_identity(instance):
+@coroutine
+def async_identity(instance):
     u"""
     Async function that returns its argument.
 
@@ -134,7 +137,8 @@ class Future(
         """
         return self.awaitable().__await__()  # noqa: WPS609
 
-    async def awaitable(self):
+    @coroutine
+    def awaitable(self):
         u"""
         Transforms ``Future[a]`` to ``Awaitable[IO[a]]``.
 
@@ -152,7 +156,7 @@ class Future(
           >>> assert anyio.run(Future.from_value(1).awaitable) == IO(1)
 
         """
-        return IO(await self._inner_value)
+        raise Return( IO((yield From(self._inner_value))) )
 
     def map(
         self,
@@ -471,8 +475,9 @@ def asyncify(function):
 
     """
     @wraps(function)
-    async def decorator(*args, **kwargs):
-        return function(*args, **kwargs)
+    @coroutine
+    def decorator(*args, **kwargs):
+        raise Return( function(*args, **kwargs) )
     return decorator
 
 
@@ -567,7 +572,8 @@ class FutureResult(
         """
         return self.awaitable().__await__()  # noqa: WPS609
 
-    async def awaitable(self):
+    @coroutine
+    def awaitable(self):
         u"""
         Transforms ``FutureResult[a, b]`` to ``Awaitable[IOResult[a, b]]``.
 
@@ -587,7 +593,7 @@ class FutureResult(
           ... ) == IOSuccess(1)
 
         """
-        return IOResult.from_result(await self._inner_value)
+        raise Return( IOResult.from_result(await self._inner_value) )
 
     def swap(self):
         u"""
@@ -1367,11 +1373,12 @@ def future_safe(
     Requires our :ref:`mypy plugin <mypy-plugins>`.
 
     """
-    async def factory(*args, **kwargs):
+    @coroutine
+    def factory(*args, **kwargs):
         try:
-            return Success(await function(*args, **kwargs))
+            raise Return( Success((yield From(function(*args, **kwargs)))) )
         except Exception, exc:
-            return Failure(exc)
+            raise Return( Failure(exc) )
 
     @wraps(function)
     def decorator(*args, **kwargs):

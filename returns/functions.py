@@ -1,6 +1,7 @@
 from __future__ import absolute_import
-from functools import wraps
 from typing import Any, Callable, NoReturn, TypeVar
+
+from six import wraps
 
 # Aliases:
 _FirstType = TypeVar(u'_FirstType')

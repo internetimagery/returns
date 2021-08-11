@@ -22,6 +22,8 @@ from typing import (
     TypeVar,
 )
 
+from trollius import coroutine
+
 from returns.interfaces.specific import io
 from returns.primitives.hkt import KindN
 
@@ -104,7 +106,8 @@ class AwaitableFutureN(Generic[_FirstType, _SecondType, _ThirdType]):
         u"""Magic method to allow ``await`` expression."""
 
     @abstractmethod
-    async def awaitable(
+    @coroutine
+    def awaitable(
         self,
     ):
         u"""Underling logic under ``await`` expression."""

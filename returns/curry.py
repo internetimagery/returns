@@ -10,7 +10,7 @@ _ReturnType = TypeVar(u'_ReturnType')
 
 
 def partial(
-    func, *args, **kwargs,
+    func, *args, **kwargs
 ):
     u"""
     Typed partial application.
@@ -172,7 +172,7 @@ def _intermediate_argspec(
     This function is slow. Any optimization ideas are welcome!
     """
     full_args = argspec.args + args
-    full_kwargs = set([**argspec.kwargs, **kwargs])
+    full_kwargs = dict(argspec.kwargs, **kwargs)
 
     try:
         argspec.signature.bind(*full_args, **full_kwargs)

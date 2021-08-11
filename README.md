@@ -1,7 +1,7 @@
 # Python 2 conversion
 
-[ ] TODO: update requirements for python 2, six, trollius
-[ ] TODO: get tests running on python 2
+* TODO: update requirements for python 2, six, trollius
+* TODO: get tests running on python 2
 
 > Original readme below:
 

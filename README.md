@@ -1,3 +1,13 @@
+# Python 2 conversion
+
+[ ] TODO: update requirements for python 2, six, trollius
+[ ] TODO: get tests running on python 2
+
+> Original readme below:
+
+-----
+
+
 [![Returns logo](https://raw.githubusercontent.com/dry-python/brand/master/logo/returns_white-outline.png)](https://github.com/dry-python/returns)
 
 -----

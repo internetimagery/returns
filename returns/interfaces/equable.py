@@ -64,11 +64,11 @@ class Equable(Lawful[u'Equable']):
 
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law1(_LawSpec.reflexive_law),
         Law2(_LawSpec.symmetry_law),
         Law3(_LawSpec.transitivity_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @abstractmethod
     def equals(self, other):

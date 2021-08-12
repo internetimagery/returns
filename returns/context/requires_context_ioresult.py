@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, TypeVar
 
@@ -105,13 +104,10 @@ class RequiresContextIOResult(
     #: Inner value of `RequiresContext`
     #: is just a function that returns `IOResult`.
     #: This field has an extra 'RequiresContext' just because `mypy` needs it.
-    _inner_value: Callable[
-        [RequiresContextIOResult, _EnvType],
-        IOResult[_ValueType, _ErrorType],
-    ]
+    _inner_value = None # type: Callable[[RequiresContextIOResult, _EnvType], IOResult[_ValueType, _ErrorType]]
 
     #: A convenient placeholder to call methods created by `.from_value()`.
-    no_args: ClassVar[NoDeps] = object()
+    no_args = object() # type: ClassVar[NoDeps]
 
     def __init__(
         self,

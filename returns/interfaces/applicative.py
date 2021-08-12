@@ -133,12 +133,12 @@ class ApplicativeN(
 
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law1(_LawSpec.identity_law),
         Law3(_LawSpec.interchange_law),
         Law3(_LawSpec.homomorphism_law),
         Law3(_LawSpec.composition_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @abstractmethod
     def apply(

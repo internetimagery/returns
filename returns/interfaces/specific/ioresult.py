@@ -5,7 +5,6 @@ It is a base interface for both sync and async ``IO`` stacks.
 """
 
 from __future__ import absolute_import
-from __future__ import annotations
 
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Callable, NoReturn, Type, TypeVar

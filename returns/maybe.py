@@ -47,18 +47,18 @@ class Maybe(
 
     """
 
-    _inner_value: Optional[_ValueType]
+    _inner_value = None # type: Optional[_ValueType]
     __match_args__ = (u'_inner_value',)
 
     #: Alias for `Nothing`
-    empty: ClassVar[u'Maybe[Any]']
+    empty = None # type: ClassVar[u'Maybe[Any]']
 
     # These two are required for projects like `classes`:
 
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type[u'Some']]
+    success_type = None # type: ClassVar[Type[u'Some']]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type[u'_Nothing']]
+    failure_type = None # type: ClassVar[Type[u'_Nothing']]
 
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
@@ -286,8 +286,8 @@ class Maybe(
 class _Nothing(Maybe[Any]):
     u"""Represents an empty state."""
 
-    _inner_value: None
-    _instance: Optional[u'_Nothing'] = None
+    _inner_value = None
+    _instance = None # type: Optional[_Nothing] = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -364,7 +364,7 @@ class Some(Maybe[_ValueType]):
     Quite similar to ``Success`` type.
     """
 
-    _inner_value: _ValueType
+    _inner_value = None # type: _ValueType
 
     def __init__(self, inner_value):
         u"""Some constructor."""
@@ -416,7 +416,7 @@ Maybe.success_type = Some
 Maybe.failure_type = _Nothing
 
 #: Public unit value of protected :class:`~_Nothing` type.
-Nothing: Maybe[NoReturn] = _Nothing()
+Nothing = _Nothing() # type: Maybe[NoReturn]
 Maybe.empty = Nothing
 
 

@@ -1,16 +1,17 @@
 
 from __future__ import absolute_import
-from typing import Awaitable, Callable, Generator, NewType, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Callable, Generator, NewType, TypeVar, Union, cast
 
 from typing_extensions import final
-from trollius import coroutines, From, Return
+from trollius import coroutine, From, Return
 
-
-_ValueType = TypeVar(u'_ValueType')
-_FunctionCoroType = TypeVar(u'_FunctionCoroType', bound=Callable[..., Awaitable])
+if TYPE_CHECKING:
+    from typing import Awaitable
+    _ValueType = TypeVar(u'_ValueType')
+    _FunctionCoroType = TypeVar(u'_FunctionCoroType', bound=Callable[..., Awaitable])
 
 _Sentinel = NewType(u'_Sentinel', object)
-_sentinel: _Sentinel = cast(_Sentinel, object())
+_sentinel = cast(_Sentinel, object())
 
 
 class ReAwaitable(object):
@@ -55,7 +56,7 @@ class ReAwaitable(object):
     def __init__(self, coro):
         u"""We need just an awaitable to work with."""
         self._coro = coro
-        self._cache: Union[_ValueType, _Sentinel] = _sentinel
+        self._cache = _sentinel # type: Union[_ValueType, _Sentinel]
 
     def __await__(self):
         u"""

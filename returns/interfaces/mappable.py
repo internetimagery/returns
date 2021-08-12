@@ -71,10 +71,10 @@ class MappableN(
 
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law1(_LawSpec.identity_law),
         Law3(_LawSpec.associative_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @abstractmethod  # noqa: WPS125
     def map(

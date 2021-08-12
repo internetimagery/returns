@@ -7,15 +7,15 @@ Use this type to mark that this specific async opetaion can fail.
 """
 
 from __future__ import absolute_import
-from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Awaitable, Callable, NoReturn, Type, TypeVar
+from typing import TYPE_CHECKING, Callable, NoReturn, Type, TypeVar
 
 from returns.interfaces.specific import future, ioresult
 from returns.primitives.hkt import KindN
 
 if TYPE_CHECKING:
+    from typing import Awaitable
     from returns.future import Future, FutureResult  # noqa: WPS433
 
 _FirstType = TypeVar(u'_FirstType')

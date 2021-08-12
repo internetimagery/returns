@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 from returns.interfaces.specific.reader_future_result import (
     ReaderFutureResultLikeN,

@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from trollius import coroutine, From, Return
 
@@ -8,6 +8,7 @@ from returns.primitives.hkt import Kind2, dekind
 from returns.result import Failure, Result, Success
 
 if TYPE_CHECKING:
+    from typing import Awaitable
     from returns.future import Future, FutureResult  # noqa: F401
 
 
@@ -49,7 +50,7 @@ def async_bind(
     inner_value,
 ):
     u"""Async binds a container over a value."""
-    container = (yield From( inner_value )
+    container = (yield From( inner_value ))
     if isinstance(container, Result.success_type):
         raise Return( ((yield From( dekind(function(container.unwrap())) )))._inner_value )
     raise Return( container )  # type: ignore[return-value]

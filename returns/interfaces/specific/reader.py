@@ -25,7 +25,6 @@ See also:
 """
 
 from __future__ import absolute_import
-from __future__ import annotations
 
 from abc import abstractmethod
 from typing import (
@@ -244,7 +243,7 @@ class ReaderBased2(
     the specific types for its ``__call__`` method.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law2(_LawSpec.purity_law),
         Law2(_LawSpec.asking_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]

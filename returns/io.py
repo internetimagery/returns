@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 from abc import ABCMeta
-from functools import wraps
-from inspect import FrameInfo
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -15,6 +13,8 @@ from typing import (
 )
 
 from typing_extensions import final
+
+from six import wraps
 
 from returns.interfaces.specific import io, ioresult
 from returns.primitives.container import BaseContainer, container_equality
@@ -69,7 +69,7 @@ class IO(
 
     """
 
-    _inner_value: _ValueType
+    _inner_value = None # type: _ValueType
 
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
@@ -307,14 +307,14 @@ class IOResult(
 
     """
 
-    _inner_value: Result[_ValueType, _ErrorType]
+    _inner_value = None # type: Result[_ValueType, _ErrorType]
     __match_args__ = (u'_inner_value',)
 
     # These two are required for projects like `classes`:
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type[u'IOSuccess']]
+    success_type = None # type: ClassVar[Type[IOSuccess]]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type[u'IOFailure']]
+    failure_type = None # type: ClassVar[Type[IOFailure]]
 
     #: Typesafe equality comparison with other `IOResult` objects.
     equals = container_equality
@@ -736,7 +736,7 @@ class IOResult(
 class IOFailure(IOResult[Any, _ErrorType]):
     u"""``IOFailure`` representation."""
 
-    _inner_value: Result[Any, _ErrorType]
+    _inner_value = None # type: Result[Any, _ErrorType]
 
     def __init__(self, inner_value):
         u"""IOFailure constructor."""  # noqa: D403
@@ -768,7 +768,7 @@ IOFailure = final(IOFailure)
 class IOSuccess(IOResult[_ValueType, Any]):
     u"""``IOSuccess`` representation."""
 
-    _inner_value: Result[_ValueType, Any]
+    _inner_value = None # type: Result[_ValueType, Any]
 
     def __init__(self, inner_value):
         u"""IOSuccess constructor."""  # noqa: D403

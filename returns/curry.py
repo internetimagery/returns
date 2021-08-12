@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from functools import partial as _partial
 from functools import wraps
-from inspect import BoundArguments, Signature
+from funcsigs import BoundArguments, Signature
 from typing import Any, Callable, Tuple, TypeVar, Union
 
 _FirstType = TypeVar(u'_FirstType')

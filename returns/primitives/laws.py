@@ -26,7 +26,7 @@ class Law(Immutable):
     __slots__ = (u'definition', )
 
     #: Function used to define this law.
-    definition: Callable
+    definition = None # type: Callable
 
     def __init__(self, function):
         u"""Saves function to the inner state."""
@@ -45,7 +45,7 @@ class Law1(
 ):
     u"""Law definition for functions with a single argument."""
 
-    definition: Callable[[u'Law1', _TypeArgType1], _ReturnType]
+    definition = None # type: Callable[[u'Law1', _TypeArgType1], _ReturnType]
 
     def __init__(
         self,
@@ -63,7 +63,7 @@ class Law2(
 ):
     u"""Law definition for functions with two arguments."""
 
-    definition: Callable[[u'Law2', _TypeArgType1, _TypeArgType2], _ReturnType]
+    definition = None # type: Callable[[Law2, _TypeArgType1, _TypeArgType2], _ReturnType]
 
     def __init__(
         self,
@@ -81,10 +81,7 @@ class Law3(
 ):
     u"""Law definition for functions with three argument."""
 
-    definition: Callable[
-        [u'Law3', _TypeArgType1, _TypeArgType2, _TypeArgType3],
-        _ReturnType,
-    ]
+    definition = None # type: Callable[[Law3, _TypeArgType1, _TypeArgType2, _TypeArgType3], _ReturnType]
 
     def __init__(
         self,
@@ -104,7 +101,7 @@ class Lawful(Generic[_Caps]):
     """
 
     #: Some classes and interfaces might have laws, some might not have any.
-    _laws: ClassVar[Sequence[Law]]
+    _laws = None # type: ClassVar[Sequence[Law]]
 
     @final  # noqa: WPS210
     @classmethod

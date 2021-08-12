@@ -127,8 +127,6 @@ class SupportsKindN(
     Needless to say, that ``__getattr__`` during runtime - never exists at all.
     """
 
-    __getattr__: None  # type: ignore
-
 
 #: Type alias used for inheritance with one type argument.
 SupportsKind1 = SupportsKindN[
@@ -196,7 +194,7 @@ class Kinded(Protocol[_FunctionDefType]):  # type: ignore
     """
 
     #: Used to translate `KindN` into real types.
-    __call__: _FunctionDefType
+    #__call__: _FunctionDefType
 
     def __get__(
         self,

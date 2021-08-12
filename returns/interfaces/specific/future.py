@@ -7,13 +7,11 @@ Don't use this type for async that can. Instead, use
 """
 
 from __future__ import absolute_import
-from __future__ import annotations
 
 from abc import abstractmethod
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
     Callable,
     Generator,
     Generic,
@@ -28,6 +26,7 @@ from returns.interfaces.specific import io
 from returns.primitives.hkt import KindN
 
 if TYPE_CHECKING:
+    from typing import Awaitable
     from returns.future import Future  # noqa: WPS433
 
 _FirstType = TypeVar(u'_FirstType')

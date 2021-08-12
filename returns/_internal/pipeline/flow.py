@@ -7,7 +7,7 @@ _ReturnType = TypeVar(u'_ReturnType')
 
 def flow(
     instance,
-    *functions,
+    *functions
 ):
     u"""
     Allows to compose a value and up to multiple functions that use this value.

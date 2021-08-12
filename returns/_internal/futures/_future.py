@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 from trollius import coroutine, From, Return
 
@@ -7,6 +7,7 @@ from returns.io import IO
 from returns.primitives.hkt import Kind1, dekind
 
 if TYPE_CHECKING:
+    from typing import Awaitable
     from returns.future import Future  # noqa: F401
 
 _ValueType = TypeVar(u'_ValueType', covariant=True)

@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from functools import wraps
-from typing import Any, Awaitable, Callable, Coroutine, Generator, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar
 
 from typing_extensions import final
 
@@ -20,6 +20,9 @@ from returns.primitives.reawaitable import ReAwaitable
 from returns.result import Failure, Result, Success
 
 from trollius import coroutine, From, Return
+
+if TYPE_CHECKING:
+    from typing import Awaitable, Coroutine
 
 # Definitions:
 _ValueType = TypeVar(u'_ValueType', covariant=True)
@@ -88,7 +91,7 @@ class Future(
 
     """
 
-    _inner_value: Awaitable[_ValueType]
+    _inner_value = None # type: Awaitable[_ValueType]
 
     def __init__(self, inner_value):
         u"""
@@ -519,7 +522,7 @@ class FutureResult(
 
     """
 
-    _inner_value: Awaitable[Result[_ValueType, _ErrorType]]
+    _inner_value = None # type: Awaitable[Result[_ValueType, _ErrorType]]
 
     def __init__(
         self,
@@ -593,7 +596,7 @@ class FutureResult(
           ... ) == IOSuccess(1)
 
         """
-        raise Return( IOResult.from_result(await self._inner_value) )
+        raise Return( IOResult.from_result((yield From( self._inner_value ))) )
 
     def swap(self):
         u"""

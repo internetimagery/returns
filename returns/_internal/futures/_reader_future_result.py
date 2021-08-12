@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 from trollius import coroutine, From, Return
 
@@ -7,6 +7,7 @@ from returns.primitives.hkt import Kind3, dekind
 from returns.result import Result
 
 if TYPE_CHECKING:
+    from typing import Awaitable
     from returns.context import RequiresContextFutureResult  # noqa: F401
 
 _ValueType = TypeVar(u'_ValueType', covariant=True)
@@ -24,9 +25,9 @@ def async_bind_async(
     u"""Async binds a coroutine with container over a value."""
     inner_value = yield From( container(deps) )._inner_value
     if isinstance(inner_value, Result.success_type):
-        raise Return( yield From( dekind(
+        raise Return( (yield From( dekind(
             (yield From( function(inner_value.unwrap()) )),
-        ) )(deps)._inner_value )
+        ) ))(deps)._inner_value )
     raise Return( inner_value )  # type: ignore[return-value]
 
 

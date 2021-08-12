@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from typing import Awaitable, Callable, TypeVar
+from typing import Callable, TypeVar
 
 from returns.future import FutureResult
 from returns.interfaces.specific.future_result import FutureResultLikeN

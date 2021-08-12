@@ -14,7 +14,7 @@ class BaseContainer(Immutable):
     u"""Utility class to provide all needed magic methods to the context."""
 
     __slots__ = (u'_inner_value',)
-    _inner_value: Any
+    _inner_value = None # type: Any
 
     def __init__(self, inner_value):
         u"""

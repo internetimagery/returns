@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from abc import ABCMeta
 from functools import wraps
-from inspect import FrameInfo
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -54,14 +53,14 @@ class Result(
     __slots__ = (u'_trace',)
     __match_args__ = (u'_inner_value',)
 
-    _inner_value: Union[_ValueType, _ErrorType]
-    _trace: Optional[List[FrameInfo]]
+    _inner_value = None # type: Union[_ValueType, _ErrorType]
+    _trace = None # type: Optional[List[FrameInfo]]
 
     # These two are required for projects like `classes`:
     #: Success type that is used to represent the successful computation.
-    success_type: ClassVar[Type[u'Success']]
+    success_type = None # type: ClassVar[Type[u'Success']]
     #: Failure type that is used to represent the failed computation.
-    failure_type: ClassVar[Type[u'Failure']]
+    failure_type = None # type: ClassVar[Type[u'Failure']]
 
     #: Typesafe equality comparison with other `Result` objects.
     equals = container_equality
@@ -310,7 +309,7 @@ class Failure(Result[Any, _ErrorType]):  # noqa: WPS338
     It should contain an error code or message.
     """
 
-    _inner_value: _ErrorType
+    _inner_value = None # type: _ErrorType
 
     def __init__(self, inner_value):
         u"""Failure constructor."""
@@ -373,7 +372,7 @@ class Success(Result[_ValueType, Any]):
     Contains the computation value.
     """
 
-    _inner_value: _ValueType
+    _inner_value = None # type: _ValueType
 
     def __init__(self, inner_value):
         u"""Success constructor."""

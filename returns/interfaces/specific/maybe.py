@@ -118,13 +118,13 @@ class MaybeLikeN(
     Cannot be unwrapped or compared.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law2(_LawSpec.map_short_circuit_law),
         Law2(_LawSpec.bind_short_circuit_law),
         Law2(_LawSpec.bind_optional_short_circuit_law),
         Law3(_LawSpec.lash_short_circuit_law),
         Law2(_LawSpec.unit_structure_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @abstractmethod
     def bind_optional(

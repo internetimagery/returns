@@ -1,10 +1,8 @@
 from __future__ import absolute_import
-from __future__ import annotations
 
 from abc import abstractmethod
 from typing import (
     TYPE_CHECKING,
-    Awaitable,
     Callable,
     ClassVar,
     Sequence,
@@ -121,9 +119,9 @@ class ReaderFutureResultBasedN(
     In this case the return type of ``__call__`` is ``FutureResult``.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law2(_LawSpec.asking_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
 
 #: Type alias for kinds with three type arguments.

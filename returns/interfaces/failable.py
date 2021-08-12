@@ -64,9 +64,9 @@ class FailableN(
     Use ``SingleFailableN`` and ``DiverseFailableN`` instead.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law3(_FailableLawSpec.lash_short_circuit_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
 
 #: Type alias for kinds with two type arguments.
@@ -130,11 +130,11 @@ class SingleFailableN(
     Like ``Maybe`` types where the only failed value is ``Nothing``.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law2(_SingleFailableLawSpec.map_short_circuit_law),
         Law2(_SingleFailableLawSpec.bind_short_circuit_law),
         Law2(_SingleFailableLawSpec.apply_short_circuit_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @property
     @abstractmethod
@@ -226,12 +226,12 @@ class DiverseFailableN(
     Like ``Result`` types.
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law3(_DiverseFailableLawSpec.map_short_circuit_law),
         Law3(_DiverseFailableLawSpec.bind_short_circuit_law),
         Law3(_DiverseFailableLawSpec.apply_short_circuit_law),
         Law3(_DiverseFailableLawSpec.alt_short_circuit_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @classmethod
     @abstractmethod

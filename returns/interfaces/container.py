@@ -79,7 +79,7 @@ class _LawSpec(LawSpecDef):
 
         The final monad law says that when
         we have a chain of container functions applications with ``bind``,
-        it shouldn’t matter how they’re nested.
+        it shouldn't matter how they're nested.
         """
         assert_equal(
             container.bind(first).bind(second),
@@ -104,11 +104,11 @@ class ContainerN(
 
     """
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law3(_LawSpec.left_identity_law),
         Law1(_LawSpec.right_identity_law),
         Law3(_LawSpec.associative_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
 
 #: Type alias for kinds with one type argument.

@@ -49,9 +49,9 @@ class SwappableN(
 ):
     u"""Interface that allows swapping first and second type values."""
 
-    _laws: ClassVar[Sequence[Law]] = (
+    _laws = (
         Law1(_LawSpec.double_swap_law),
-    )
+    ) # type: ClassVar[Sequence[Law]]
 
     @abstractmethod
     def swap(

@@ -223,8 +223,8 @@ def _create_law_test_case(
 
     template = u'test_{container}_{interface}_{name}'
     test_function.__name__ = template.format(  # noqa: WPS125
-        container=container_type.__qualname__.lower(),
-        interface=interface.__qualname__.lower(),
+        container=container_type.__name__.lower(),
+        interface=interface.__name__.lower(),
         name=law.name,
     )
 

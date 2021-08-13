@@ -27,7 +27,7 @@ class BaseContainer(Immutable):
     def __repr__(self):
         u"""Used to display details of object."""
         return u'<{0}: {1}>'.format(
-            self.__class__.__qualname__.strip(u'_'),
+            self.__class__.__name__.strip(u'_'),
             unicode(self._inner_value),
         )
 

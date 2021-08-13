@@ -119,7 +119,7 @@ class Lawful(Generic[_Caps]):
         seen = dict((
             u'{0}.{1}'.format(
                 parent.__module__,  # noqa: WPS609
-                parent.__qualname__,
+                parent.__name__,
             ), parent)
             for parent in cls.__mro__)
 
